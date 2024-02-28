@@ -20,7 +20,13 @@ class SignUpSerializer(serializers.ModelSerializer):
                 'write_only': True
             }
         }
-
+    def validate_email(self, value):
+        # Convert email to lowercase to ensure uniqueness check is case-insensitive
+        lower_email = value.lower()
+        if User.objects.filter(email=lower_email).exists():
+            raise serializers.ValidationError("A user with that email already exists.")
+        return lower_email
+    
     def create(self, validated_data):
         #  clean all vlues, set as lowercase
         username = validated_data['username'].lower()
