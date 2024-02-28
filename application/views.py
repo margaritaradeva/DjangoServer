@@ -1,6 +1,6 @@
 from django.contrib.auth import authenticate
 from django.shortcuts import render
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -51,4 +51,11 @@ class SignUpView(APIView):
         user_data = get_auth_for_user(user)
 
         return Response(user_data)
-        
+
+class DeleteUserView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        return Response({"message":"User account has been successfully deleted."})
