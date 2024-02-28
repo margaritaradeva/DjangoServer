@@ -15,3 +15,4 @@ class User(AbstractUser):
         null=True,
         blank=True
     )
+    email = models.EmailField(unique=True, blank=False, null=False)
