@@ -3,7 +3,6 @@ from django.shortcuts import render
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import UserSerializer, SignUpSerializer
 # Create your views here.
 from django.http import HttpResponse
@@ -12,7 +11,7 @@ def home_view(request):
     return HttpResponse("Welcome to the home page!")
 
 def get_auth_for_user(user):
-    tokens = RefreshToken.for_user(user)
+    # tokens = RefreshToken.for_user(user)
     return {
         'user': UserSerializer(user).data,
         'tokens': {
