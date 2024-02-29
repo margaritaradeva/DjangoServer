@@ -79,7 +79,7 @@ INSTALLED_APPS = [
 ]
 
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'users.serializers.UserSerializer',
+    'USER_DETAILS_SERIALIZER': 'application.serializers.UserSerializer',
 }
 
 MIDDLEWARE = [
