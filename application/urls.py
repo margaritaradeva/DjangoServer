@@ -1,11 +1,22 @@
-from django.urls import path
-from .views import SignInView, SignUpView, DeleteUserView
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
+# urls.py
+from django.urls import path, include
+from django.contrib import admin
+from allauth.account.views import confirm_email
+from django.urls.conf import re_path as url
 
 urlpatterns = [
-    path('signin/', SignInView.as_view()),
-    path('signup/', SignUpView.as_view()),
-    path('delete_user/', DeleteUserView.as_view()),
-    # path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # path('refresh/', TokenRefreshView.as_view(), name='token_refresh')
+    # Django admin route
+    path('admin/', admin.site.urls),
+
+    # URLs for django-rest-auth
+    path('rest-auth/', include('rest_auth.urls')),
+
+    # URLs for django-rest-auth registration
+    path('rest-auth/registration/', include('rest_auth.registration.urls')),
+
+    # URLs for django-allauth
+    path('accounts/', include('allauth.urls')),
+
+    # Custom URL for email confirmation
+    url(r'^accounts-rest/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
 ]

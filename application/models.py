@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 from .managers import CustomUserManager
 
 
@@ -15,7 +15,7 @@ def upload_thumbnail(instance, filename):
     Returns:
     str: A file system path that specifies where the uploadded file will be stored
     """
-    path = f'thumbnails/{instance.username}'
+    path = f'thumbnails/{instance.email}'
     extension = filename.split('.')[-1]
     if extension:
         path = path + '.' + extension

@@ -5,7 +5,7 @@ because I want email verification and a username becomes obsolete
 """
 
 from django.contrib.auth.base_user import BaseUserManager # Starting point from which I inherit for the manager
-from django.utils.translation import ugettext_lazy as _ # Translation function
+from django.utils.translation import gettext_lazy as _ # Translation function
 
 
 class CustomUserManager(BaseUserManager):
@@ -62,4 +62,4 @@ class CustomUserManager(BaseUserManager):
             raise ValueError(_('Superuser must have "is_staff" equal to True'))
         if is_superuser is not True:
             raise ValueError(_('Superuser must have "is_superuser" equal to True'))
-        return self.create_user(email, password, kwargs)
+        return self.create_user(email, password, **kwargs)
