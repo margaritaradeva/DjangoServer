@@ -17,6 +17,6 @@ urlpatterns = [
     # URLs for django-allauth
     path('accounts/', include('allauth.urls')),
 
-    # Custom URL for email confirmation
-    url(r'^accounts-rest/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
+    # # Custom URL for email confirmation
+    # url(r'^accounts-rest/registration/account-confirm-email/(?P<key>.+)/$', confirm_email, name='account_confirm_email'),
 ]
