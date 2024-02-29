@@ -53,7 +53,8 @@ class SignUpView(APIView):
         return Response(user_data)
 
 class DeleteUserView(APIView):
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def delete(self, request, *args, **kwargs):
         user = request.user
