@@ -56,4 +56,4 @@ class CustomUser(AbstractUser):
         Returns:
         str: The user's email addresss
         """
-        return f"{self.first_name} {self.last_name} {self.email}"
+        return f"Name: {self.first_name} {self.last_name} \n email: {self.email}"
