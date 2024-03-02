@@ -10,8 +10,7 @@ class CustomUserAdmin(admin.ModelAdmin):
         "id",
         "first_name",
         "last_name",
-        "email",
-        "password"
+        "email"
     )
 
 admin.site.register(CustomUser,CustomUserAdmin)
