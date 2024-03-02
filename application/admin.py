@@ -5,8 +5,7 @@ from .models import CustomUser
 # Register your models here.
 
 
-admin.site.register(CustomUser)
-class Admin(admin.ModelAdmin):
+class CustomUserAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "first_name",
@@ -15,4 +14,4 @@ class Admin(admin.ModelAdmin):
         "password"
     )
 
-admin.site.register(CustomUser,Admin)
+admin.site.register(CustomUser,CustomUserAdmin)
