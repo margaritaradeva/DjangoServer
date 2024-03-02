@@ -39,8 +39,9 @@ SECURE_SSL_REDIRECT = not DEBUG # redirect all non-HTTPS requests to HTTPS, whic
 
 
 # avoid transmitting the CSRF token and session ID over non-HTTPS connections.
-CSRF_COOKIE_SECURE = not DEBUG
-SESSION_COOKIE_SECURE = not DEBUG
+###### CHNAGE LATER
+CSRF_COOKIE_SECURE = DEBUG
+SESSION_COOKIE_SECURE = DEBUG
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -49,8 +50,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
-    'application'
+     'application',
+    'rest_framework'
+   
 ]
 
 
