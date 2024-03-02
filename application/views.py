@@ -8,6 +8,8 @@ from rest_framework.views import APIView
 # Create your views here.
 from django.http import HttpResponse
 from .serializers import CustomUserUserSerializer
+import services
+
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -18,10 +20,11 @@ class SignUp(APIView):
         serializer = CustomUserUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        print(data)
-        return Response(data={"Hello" : "world"})
+        serializer.instance = services.create_user(dataclass_user=data)
+        return Response(data )
 
-
+# class SignIn(APIView):
+#      def 
 
 
 # class   DeleteUserView(APIView):
