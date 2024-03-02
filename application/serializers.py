@@ -12,3 +12,8 @@ class CustomUserUserSerializer(serializers.Serializer):
     def to_internal_value(self, data):
         data = super().to_internal_value(data)
         return services.CustomUserDataclass(**data) 
+    
+    def create(self, validated_data):
+        # Call the create_user method from  services.py
+        user_dataclass = services.CustomUserDataclass(**validated_data)
+        return services.CustomUserDataclass.create_user(user_dataclass)

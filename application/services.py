@@ -24,6 +24,7 @@ class CustomUserDataclass:
             id=dataclass_user.id
         )
     
+    @classmethod
     def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
         instance = models.CustomUser(
             first_name=dataclass_user.first_name,
