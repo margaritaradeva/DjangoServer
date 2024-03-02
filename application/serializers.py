@@ -1,6 +1,6 @@
 from application.models import CustomUser
 from rest_framework import serializers
-import services
+from . import services
 
 class CustomUserUserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True) # Shouldn't be able to change an id of a user

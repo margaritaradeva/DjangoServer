@@ -8,7 +8,7 @@ from rest_framework.views import APIView
 # Create your views here.
 from django.http import HttpResponse
 from .serializers import CustomUserUserSerializer
-import services
+from . import services
 
 
 def home_view(request):
