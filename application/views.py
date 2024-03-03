@@ -20,7 +20,7 @@ class SignUp(APIView):
         serializer = CustomUserUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
-        serializer.instance = services.CustomUserDataclass.create_user(dataclass_user=data)
+        serializer.instance = services.create_user(dataclass_user=data)
         return Response(data)
 
 # class SignIn(APIView):
