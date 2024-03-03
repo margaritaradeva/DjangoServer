@@ -8,7 +8,7 @@ from rest_framework import status
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
 from . import services
-
+from rest_framework import exceptions
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -27,11 +27,24 @@ class SignUp(APIView):
 
 class SignIn(APIView):
     def post(self, request):
-        # email=request.data["email"]
-        # password=request.data["password"]
+        # not gonna return a dataclass object bc i want to authenticate a user and store that session
+        # inside a cookie
+        email = request.data["email"]
+        password = request.data["password"]
+
+        user = services.get_user_by_email(email=email)
+        # INvalid credentials for both cases bc we dont wanna tell an attacker which one is wrong
+        if user is None:
+            raise exceptions.AuthenticationFailed("Invalid credentials")
+        if not user.check_password(raw_password=password):
+            raise exceptions.AuthenticationFailed("Invalid credentials")
+
+        token = services.create_jwt_token(id=user.id)
+        resp = Response()
+        resp.set_cookie(key="jwt", value=token, httponly=True)
         
-        # if not user.check_password(raw)
-        pass
+        return resp
+        # JWT token
 
 # class   DeleteUserView(APIView):
 #     # permission_classes = [IsAuthenticated]
