@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 # from .serializers import UserSerializer
 # Create your views here.
 from django.http import HttpResponse
-from .serializers import CustomUserUserSerializer
+from .serializers import CustomUserSerializer
 from . import services
 
 
@@ -17,11 +17,12 @@ def home_view(request):
 
 class SignUp(APIView):
     def post(self, request):
-        serializer = CustomUserUserSerializer(data=request.data)
+        serializer = CustomUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # data = serializer.validated_data
-        serializer.instance = serializer.create(serializer.validated_data)
-        return Response(serializer.instance.to_dict())
+        data = serializer.validated_data
+        dataclass_instance = services.CustomUserDataclass(**data)
+        user = services.create_user(dataclass_instance)
+        return Response(user.to_dict())
 
 # class SignIn(APIView):
 #      def 

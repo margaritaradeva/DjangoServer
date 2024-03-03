@@ -23,8 +23,8 @@ class CustomUserDataclass:
             email=dataclass_user.email,
             id=dataclass_user.id
         )
-        
-    def to_dic(self):
+
+    def to_dict(self):
         return dataclasses.asdict(self)
 
 def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
