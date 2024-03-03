@@ -23,16 +23,16 @@ class CustomUserDataclass:
             email=dataclass_user.email,
             id=dataclass_user.id
         )
-    
-    @classmethod
-    def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
-        instance = models.CustomUser(
-            first_name=dataclass_user.first_name,
-            last_name=dataclass_user.last_name,
-            email=dataclass_user.email
-        )
-        if dataclass_user.password is not None:
-            instance.set_password(dataclass_user.password)
+        
+
+def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
+    instance = models.CustomUser(
+        first_name=dataclass_user.first_name,
+        last_name=dataclass_user.last_name,
+        email=dataclass_user.email
+    ) 
+    if dataclass_user.password is not None:
+        instance.set_password(dataclass_user.password)
 
         instance.save()
 
