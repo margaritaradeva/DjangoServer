@@ -3,6 +3,10 @@ from typing import TYPE_CHECKING
 from . import models 
 from django.db import IntegrityError
 from rest_framework.exceptions import ValidationError
+import jwt
+import datetime
+from django.conf import settings
+
 
 if TYPE_CHECKING:
     from .models import CustomUser
@@ -44,3 +48,17 @@ def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
             return CustomUserDataclass.from_instance(instance)
     except IntegrityError:
         raise ValidationError({"email":"A user with that email already exists"})
+
+def get_user_by_email(email:str) ->"CustomUser":
+    # get a user and their data by email
+    user = models.CustomUser.objects.filter(email=email).first()
+    return user
+
+def create_jwt_token(id: int)-> str:
+    data = dict(
+        id=id,
+        # CHANGE LATER to higer expiration time for the tojen
+        expiration_time=datetime.datetime.utcnow() + datetime.timedelta(hours=1),
+        time_of_creation = datetime.datetime.utcnow(),
+    )
+    token = jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
