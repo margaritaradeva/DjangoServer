@@ -1,6 +1,8 @@
 import dataclasses
 from typing import TYPE_CHECKING
 from . import models 
+from django.db import IntegrityError
+from rest_framework.exceptions import ValidationError
 
 if TYPE_CHECKING:
     from .models import CustomUser
@@ -28,15 +30,17 @@ class CustomUserDataclass:
         return dataclasses.asdict(self)
 
 def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
-    instance = models.CustomUser(
-        first_name=dataclass_user.first_name,
-        last_name=dataclass_user.last_name,
-        email=dataclass_user.email
-    ) 
-    if dataclass_user.password is not None:
-        instance.set_password(dataclass_user.password)
+    try:
+        instance = models.CustomUser(
+            first_name=dataclass_user.first_name,
+            last_name=dataclass_user.last_name,
+            email=dataclass_user.email
+        ) 
+        if dataclass_user.password is not None:
+            instance.set_password(dataclass_user.password)
 
-        instance.save()
+            instance.save()
 
-        return CustomUserDataclass.from_instance(instance)
-    
+            return CustomUserDataclass.from_instance(instance)
+    except IntegrityError:
+        raise ValidationError({"email":"A user with that email already exists"})
