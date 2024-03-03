@@ -23,7 +23,7 @@ class SignUp(APIView):
             serializer.instance = services.create_user(dataclass_user=data)
             return Response(data=serializer.data)
         except ValidationError as e:
-            return Response(e.detail)
+            return Response(e.detail, status=409)
 
 class SignIn(APIView):
     def post(self, request):
