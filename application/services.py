@@ -62,3 +62,5 @@ def create_jwt_token(id: int)-> str:
         time_of_creation = datetime.datetime.utcnow(),
     )
     token = jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
+
+    return token
