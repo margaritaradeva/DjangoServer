@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
-
+from rest_framework import status
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
 from . import services
@@ -23,7 +23,7 @@ class SignUp(APIView):
             serializer.instance = services.create_user(dataclass_user=data)
             return Response(data=serializer.data)
         except ValidationError as e:
-            return Response(e.detail, status=409)
+            return Response(e.detail, status.HTTP_409_CONFLICT)
 
 class SignIn(APIView):
     def post(self, request):
