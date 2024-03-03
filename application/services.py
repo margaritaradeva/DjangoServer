@@ -24,6 +24,8 @@ class CustomUserDataclass:
             id=dataclass_user.id
         )
         
+    def to_dic(self):
+        return dataclasses.asdict(self)
 
 def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
     instance = models.CustomUser(
@@ -37,3 +39,4 @@ def create_user(dataclass_user: "CustomUserDataclass") -> "CustomUserDataclass":
         instance.save()
 
         return CustomUserDataclass.from_instance(instance)
+    

@@ -19,9 +19,9 @@ class SignUp(APIView):
     def post(self, request):
         serializer = CustomUserUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
-        serializer.instance = services.create_user(dataclass_user=data)
-        return Response(data)
+        # data = serializer.validated_data
+        serializer.instance = serializer.create(serializer.validated_data)
+        return Response(serializer.instance.to_dict())
 
 # class SignIn(APIView):
 #      def 

@@ -17,3 +17,5 @@ class CustomUserUserSerializer(serializers.Serializer):
         # Call the create_user method from  services.py
         user_dataclass = services.CustomUserDataclass(**validated_data)
         return services.create_user(user_dataclass)
+    
+   
