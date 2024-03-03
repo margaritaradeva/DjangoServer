@@ -4,5 +4,6 @@ from django.contrib import admin
 from . import views
 urlpatterns = [
     # URLs for django-rest-auth
-    path("signup/", views.SignUp.as_view(), name="signup")
+    path('signup/', views.SignUp.as_view(), name='signup'),
+    path('signin/', views.SignIn.as_view(), name = 'signin')
 ]
