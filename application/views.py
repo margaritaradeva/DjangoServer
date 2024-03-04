@@ -4,11 +4,12 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
-from rest_framework import status
+from rest_framework import status, permissions
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
-from . import services
+from . import services, authentication
 from rest_framework import exceptions
+
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -31,20 +32,36 @@ class SignIn(APIView):
         # inside a cookie
         email = request.data["email"]
         password = request.data["password"]
-
+        
         user = services.get_user_by_email(email=email)
         # INvalid credentials for both cases bc we dont wanna tell an attacker which one is wrong
         if user is None:
             raise exceptions.AuthenticationFailed("Invalid credentials")
         if not user.check_password(raw_password=password):
             raise exceptions.AuthenticationFailed("Invalid credentials")
-
+        
         token = services.create_jwt_token(id=user.id)
         resp = Response()
         resp.set_cookie(key="jwt", value=token, httponly=True)
         
         return resp
         # JWT token
+    
+class isSignedIn(APIView):
+        # can only be used if the user is authenticated
+    authentication_classes = (authentication.CustomUserAuthentication,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        user=request.user
+        serializer = CustomUserSerializer(user)
+        return Response(serializer.data)
+
+
+
+
+
+
 
 # class   DeleteUserView(APIView):
 #     # permission_classes = [IsAuthenticated]
