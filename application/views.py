@@ -9,7 +9,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework import status, permissions
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
-from . import services, authentication
+from . import services
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
