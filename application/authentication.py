@@ -23,6 +23,6 @@ class CustomUserAuthentication(authentication.BaseAuthentication):
         except:
             raise exceptions.AuthenticationFailed("Unauthorised")
         
-        user = models.CustomUser.objects.filder(id=data["id"]).first()
+        user = models.CustomUser.objects.filter(id=data["id"]).first()
 
         return (user, None)
