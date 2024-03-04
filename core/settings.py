@@ -14,8 +14,13 @@ from pathlib import Path
 import environ
 import dj_database_url
 import os
+#################
+from django.core.asgi import get_asgi_application
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
 
+application = get_asgi_application()
+####################
 env = environ.Env()
 environ.Env.read_env()
 
@@ -33,8 +38,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 DEBUG = True
 
 # settings.py
-ALLOWED_HOSTS = ['expo-brushy-56de67f02740.herokuapp.com', 'localhost', '127.0.0.1']
-SECURE_SSL_REDIRECT = DEBUG # redirect all non-HTTPS requests to HTTPS, which is important for security on Heroku.
+#ALLOWED_HOSTS = ['expo-brushy-56de67f02740.herokuapp.com', 'localhost', '127.0.0.1']
+#LOCAL DEV
+ALLOWED_HOSTS = ['127.0.0.1','*']
+SECURE_SSL_REDIRECT = not DEBUG # redirect all non-HTTPS requests to HTTPS, which is important for security on Heroku.
 
 
 
@@ -99,14 +106,26 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
+##############HEROKU
+# DATABASES = {
    
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
-}
+#     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
+############# LOCAL 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': env("DB_NAME"),
+        'USER': env("DB_USER"),
+        'PASSWORD': env("DB_PASSWORD"),
+        'HOST': env("DB_HOST"),
+        'PORT': env("DB_PORT"),
+    }
+}
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -147,5 +166,5 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'  # Add this line
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL ="application.CustomUser"
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ALLOW_CREDENTIALS = True

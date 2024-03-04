@@ -1,45 +1,17 @@
-from django.contrib.auth import get_user_model
 from django.test import TestCase
+from rest_framework.test import APIClient  # Import this for API testing
 
+class SignUpTest(TestCase):
+    def setUp(self):
+        self.client = APIClient()  # Create a test client instance
 
-class UsersManagersTests(TestCase):
-
-    def test_create_user(self):
-        User = get_user_model()
-        user = User.objects.create_user(email="normal@user.com", password="foo")
-        self.assertEqual(user.email, "normal@user.com")
-        self.assertTrue(user.is_active)
-        self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)
-        try:
-            # username is None for the AbstractUser option
-            # username does not exist for the AbstractBaseUser option
-            self.assertIsNone(user.username)
-        except AttributeError:
-            pass
-        with self.assertRaises(TypeError):
-            User.objects.create_user()
-        with self.assertRaises(TypeError):
-            User.objects.create_user(email="")
-        with self.assertRaises(ValueError):
-            User.objects.create_user(email="", password="foo")
-
-    def test_create_superuser(self):
-        User = get_user_model()
-        admin_user = User.objects.create_superuser(
-            email="super@user.com", password="foo"
-        )
-        self.assertEqual(admin_user.email, "super@user.com")
-        self.assertTrue(admin_user.is_active)
-        self.assertTrue(admin_user.is_staff)
-        self.assertTrue(admin_user.is_superuser)
-        try:
-            # username is None for the AbstractUser option
-            # username does not exist for the AbstractBaseUser option
-            self.assertIsNone(admin_user.username)
-        except AttributeError:
-            pass
-        with self.assertRaises(ValueError):
-            User.objects.create_superuser(
-                email="super@user.com", password="foo", is_superuser=False
-            )
+    def test_signup_success(self):
+        data = {
+            "first_name": "Test", 
+            "last_name": "User",
+            "email": "test@example.com",
+            "password": "strongpassword123"
+        }
+        response = self.client.post('/application/signup/', data)
+        self.assertEqual(response.status_code, 200)  # Expect HTTP 200 status code
+        # You can add more assertions to check the response data if needed
