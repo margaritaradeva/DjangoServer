@@ -1,3 +1,23 @@
+"""
+Models for the User Managegement System
+
+Including custom user model and utility functions.
+This module extends Django's AbstractUser, replacing the username with an
+email as the unique identifier.
+
+The module also includes a function to generate filepaths for user
+thumbnail pictures, making sure each thumbnail is stored in a unique directory
+based on the email address
+
+Classes:
+-CustomUser: Extends Django's AbstractUser
+
+Functions:
+-upload_thumbnail(instance, filename): unique upload path for thumbnail pictures
+
+Custom Manager:
+-overrides Django's default user model manager to use email as unique identifier
+"""
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .managers import CustomUserManager
@@ -57,3 +77,4 @@ class CustomUser(AbstractUser):
         str: The user's email addresss
         """
         return f"Name: {self.first_name} {self.last_name} \n email: {self.email}"
+    
