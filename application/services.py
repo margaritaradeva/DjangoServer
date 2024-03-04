@@ -58,7 +58,7 @@ def create_jwt_token(id: int)-> str:
     data = dict(
         id=id,
         # CHANGE LATER to higer expiration time for the tojen
-        expiration_time=(datetime.datetime.utcnow() + datetime.timedelta(hours=1)).isoformat(),
+        expiration_time=(datetime.datetime.utcnow() + datetime.timedelta(minutes=1)).isoformat(),
         time_of_creation = datetime.datetime.utcnow().isoformat(),
     )
     token = jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
