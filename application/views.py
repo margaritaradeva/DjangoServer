@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from .serializers import CustomUserSerializer
 from . import services, authentication
 from rest_framework import exceptions
-
+from django.utils import timezone
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -43,7 +43,8 @@ class SignIn(APIView):
         token = services.create_jwt_token(id=user.id)
         resp = Response()
         resp.set_cookie(key="jwt", value=token, httponly=True)
-        
+        user.last_login = timezone.now()
+        user.save(update_fields=['last_login'])
         return resp
         # JWT token
     
