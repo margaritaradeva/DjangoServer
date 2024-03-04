@@ -10,6 +10,7 @@ from .serializers import CustomUserSerializer
 from . import services, authentication
 from rest_framework import exceptions
 from django.utils import timezone
+import timedelta
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -40,12 +41,10 @@ class SignIn(APIView):
         if not user.check_password(raw_password=password):
             raise exceptions.AuthenticationFailed("Invalid credentials")
         
-        token = services.create_jwt_token(id=user.id)
-        resp = Response()
-        resp.set_cookie(key="jwt", value=token, httponly=True)
+        token = services.create_jwt_token(user.id)
         user.last_login = timezone.now()
         user.save(update_fields=['last_login'])
-        return resp
+        return Response({'token': token}, status=status.HTTP_200_OK)
         # JWT token
     
 class isSignedIn(APIView):
@@ -56,7 +55,7 @@ class isSignedIn(APIView):
     def get(self, request):
         user=request.user
         serializer = CustomUserSerializer(user)
-        return Response(serializer.data)
+        return Response({"message": "User is authenticated"}, status=status.HTTP_200_OK)
 
 
 
@@ -73,11 +72,13 @@ class SignOut(APIView):
 
 
 
-# class   DeleteUserView(APIView):
-#     # permission_classes = [IsAuthenticated]
-#     permission_classes = [AllowAny]
-
-#     def delete(self, request, *args, **kwargs):
-#         user = request.user
-#         user.delete()
-#         return Response({"message":"User account has been successfully deleted."})
+class RefreshToken(APIView):
+    permission_classes=[AllowAny]
+    
+    def post(self, request):
+        refresh_token = request.data.get('refresh_token')
+        if not refresh_token:
+            raise exceptions.AuthenticationFailed('Authentication credentials were not provided')
+        try:
+            payload == jwt.decode(refresh_token, settings.JWT_SECRET)
+        except:

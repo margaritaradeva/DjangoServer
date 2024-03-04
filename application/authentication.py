@@ -13,16 +13,24 @@ class CustomUserAuthentication(authentication.BaseAuthentication):
     (jwt token) so it has to be done manually
     """
     def authenticate(self, request):
-        token = request.COOKIES.get("jwt")
-        if not token:
-            # if not authenticated
-            return None
-        
-        try:
-            data = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
-        except:
-            raise exceptions.AuthenticationFailed("Unauthorised")
-        
-        user = models.CustomUser.objects.filter(id=data["id"]).first()
+        auth_header = request.headers.get('Authorization')
+        if not auth_header or not auth_header.startswith('Bearer '):
+            return None # No token provided or wrong scheme
+        token = auth_header.split(' ')[1] # Get the token part of the header
 
+        try:
+            payload = jwt.decode(token, settings.JWT_SECRET, algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise exceptions.AuthenticationFailed("Token expired, login again")
+        except jwt.DecodeError:
+            raise exceptions.AuthenticationFailed('Token is invalid')
+        except jwt.InvalidTokenError:
+            raise exceptions.AuthenticationFailed('Invalid token')
+        except:
+            raise exceptions.AuthenticationFailed('Somethig went wrong during authentication')
+        
+        user = models.CustomUser.objects.filter(id=payload["id"]).first()
+        if user is None:
+            raise exceptions.AuthenticationFailed('User not found')
+        
         return (user, None)

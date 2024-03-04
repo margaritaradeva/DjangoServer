@@ -55,12 +55,26 @@ def get_user_by_email(email:str) ->"CustomUser":
     return user
 
 def create_jwt_token(id: int)-> str:
-    data = dict(
-        id=id,
+    # change later to hour=1 to balance between security and convinience.
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(minutes=3)
+    payload = {
+        'id':id,
         # CHANGE LATER to higer expiration time for the tojen
-        expiration_time=(datetime.datetime.utcnow() + datetime.timedelta(minutes=1)).isoformat(),
-        time_of_creation = datetime.datetime.utcnow().isoformat(),
-    )
-    token = jwt.encode(data, settings.JWT_SECRET, algorithm="HS256")
+        'exp': expiration_time,
+        'iat': datetime.datetime.utcnow(),
+    }
+    token = jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
 
+    return token
+
+def create_refresh_token(user_id: int)->str:
+    expiration_time = datetime.datetime.utcnow() + datetime.timedelta(days=7)
+    payload = {
+        'id': user_id,
+        'exp': expiration_time,
+        'iat': datetime.datetime.utcnow(),
+        'type':'refresh',
+    }
+
+    token = jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
     return token
