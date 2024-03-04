@@ -61,7 +61,7 @@ class isSignedIn(APIView):
 
 class SignOut(APIView):
     authentication_classes = (authentication.CustomUserAuthentication,)
-    permission_classes = (permissions.isAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def post(self,request):
         resp = Response()
