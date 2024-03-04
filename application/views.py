@@ -59,7 +59,16 @@ class isSignedIn(APIView):
 
 
 
+class SignOut(APIView):
+    authentication_classes = (authentication.CustomUserAuthentication,)
+    permission_classes = (permissions.isAuthenticated,)
 
+    def post(self,request):
+        resp = Response()
+        resp.delete_cookie("jwt")
+        resp.data = {"message":"user logged out"}
+
+        return resp
 
 
 
