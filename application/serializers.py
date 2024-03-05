@@ -1,16 +1,35 @@
+from django.forms import ValidationError
 from application.models import CustomUser
 from rest_framework import serializers
-from . import services
+from .models import validate_password
+import re
 
 class CustomUserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True) # Shouldn't be able to change an id of a user
     first_name = serializers.CharField()
     last_name = serializers.CharField()
-    email = serializers.CharField()
+    email = serializers.EmailField()
     password = serializers.CharField(write_only=True) # Don't ever want to return a password in an API response 
         
-    def to_internal_value(self, data):
-        data = super().to_internal_value(data)
-        return services.CustomUserDataclass(**data) 
+    def create(self, data):
+        user = CustomUser.objects.create(
+            first_name = data['first_name'],
+            last_name = data['last_name'],
+            email = data['email']
+        )
+        user.set_password(data['password'])
+        user.save()
+
+        return user
+    
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+    
+   
+    
+    def change(self,atr):
+        pass
+        
     
   

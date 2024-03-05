@@ -14,14 +14,16 @@ Classes:
 
 Functions:
 -upload_thumbnail(instance, filename): unique upload path for thumbnail pictures
-
+-validate_password(password): validate a user's password (if it is complex enough)
 Custom Manager:
 -overrides Django's default user model manager to use email as unique identifier
 """
+from datetime import timedelta
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ValidationError
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from .managers import CustomUserManager
-
 
 def upload_thumbnail(instance, filename):
     """
@@ -40,6 +42,30 @@ def upload_thumbnail(instance, filename):
         path = path + "." + extension
     return path
 
+
+def validate_password(password):
+    """
+    Validates a user's password for the following conditions:
+    -At least 8 characters long
+    -At least one uppercase letter
+    -At least one lowercase letter
+    -At least one special character
+    -At least one number
+    """
+    conditions = [
+        lambda s: any(x.isupper() for x in s), # Check for uppercase
+        lambda s: any(x.islower() for x in s), # Lowercase
+        lambda s: any(x.isdigit() for x in s), # Digits
+        lambda s: any(not x.isalnum() for x in s), # Special chars
+        lambda s: len(s) >= 8, # Password length
+        ]
+    if not all(condition(password) for condition in conditions):
+        raise ValidationError("Password does not meet complexity requirements")
+
+def get_user_by_email(email):
+        # get a user and their data by email
+        user = CustomUser.objects.filter(email=email).first()
+        return user
 
 class CustomUser(AbstractUser):
     """
@@ -64,10 +90,13 @@ class CustomUser(AbstractUser):
     # Specify the unique identifier to be the email not username
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]  # Empty as email is already enforced
-
+   # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately
     objects = CustomUserManager()
+    validators = [UnicodeUsernameValidator, validate_password]
+
+    
 
     def __str__(self):
         """

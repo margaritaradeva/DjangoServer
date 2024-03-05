@@ -9,7 +9,9 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework import status, permissions
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
-from . import services
+from django.db import IntegrityError
+from .managers import CustomUserManager
+from .models import CustomUser, get_user_by_email
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -19,12 +21,22 @@ class SignUp(APIView):
     def post(self, request):
         serializer = CustomUserSerializer(data=request.data)
         try:
-            serializer.is_valid(raise_exception=True)
-            data = serializer.validated_data
-            serializer.instance = services.create_user(dataclass_user=data)
-            return Response(data=serializer.data)
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                data = {
+                    'id':user.id,
+                    'first_name':user.first_name,
+                    'last_name':user.last_name,
+                    'email':user.email
+                }
+                return Response(data=data, status=status.HTTP_201_CREATED)
+            else:
+                return Response({'detail':'Password does not meet the complexity requirements'},status=status.HTTP_400_BAD_REQUEST)
         except ValidationError as e:
             return Response(e.detail, status.HTTP_409_CONFLICT)
+        except IntegrityError as e:
+            # Handle the unique constraint error
+            return Response({'detail': 'A user with that email already exists.'}, status=status.HTTP_409_CONFLICT)
 
 class SignIn(APIView):
     def post(self, request):
@@ -34,7 +46,7 @@ class SignIn(APIView):
         email = request.data["email"]
         password = request.data["password"]
 
-        user = services.get_user_by_email(email=email)
+        user = get_user_by_email(email=email)
         # INvalid credentials for both cases bc we dont wanna tell an attacker which one is wrong
         if user is None:
             raise exceptions.AuthenticationFailed("Invalid credentials")

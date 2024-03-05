@@ -3,7 +3,6 @@ This custom manager provides helper methods to create regular and superusers, as
 the default user model expects a username, which I am not using. The reason to do so is 
 because I want email verification and a username becomes obsolete
 """
-
 from django.contrib.auth.base_user import (
     BaseUserManager,
 )  # Starting point from which I inherit for the manager
@@ -79,3 +78,4 @@ class CustomUserManager(BaseUserManager):
         """
         user = self.create_user(first_name, last_name,email, password,is_staff=True,is_superuser=True)
         user.save()
+    
