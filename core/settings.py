@@ -14,12 +14,9 @@ from pathlib import Path
 import environ
 import dj_database_url
 import os
+import sys
 #################
-from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-
-application = get_asgi_application()
 ####################
 env = environ.Env()
 environ.Env.read_env()
@@ -40,7 +37,7 @@ DEBUG = True
 # settings.py
 #ALLOWED_HOSTS = ['expo-brushy-56de67f02740.herokuapp.com', 'localhost', '127.0.0.1']
 #LOCAL DEV
-ALLOWED_HOSTS = ['127.0.0.1','*']
+ALLOWED_HOSTS = ['http://127.0.0.1:8000','127.0.0.1','*']
 SECURE_SSL_REDIRECT = not DEBUG # redirect all non-HTTPS requests to HTTPS, which is important for security on Heroku.
 
 
@@ -57,9 +54,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-     'application',
+    'application',
     'rest_framework',
-    'rest_framework_simplejwt'
+    'rest_framework_simplejwt',
+    'corsheaders',
    
 ]
 REST_FRAMEWORK = {
@@ -80,10 +78,11 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
-
+CORS_ALLOW_ALL_ORIGINS = True # CHANGE TO FRONTEND DOMAIN
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -107,25 +106,32 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 ##############HEROKU
-# DATABASES = {
+DATABASES = {
    
-#     'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+}
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
 # }
+
+# if 'test' in sys.argv:  # Use SQLite for local testing
+#      DATABASES['default'] = {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': 'db.sqlite3',
+#     } 
+# else:  # Use Heroku Postgres for production
+#     DATABASES['default'] = dj_database_url.config(default=os.environ.get('DATABASE_URL'), conn_max_age=600, ssl_require=True)
+
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 ############# LOCAL 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env("DB_NAME"),
-        'USER': env("DB_USER"),
-        'PASSWORD': env("DB_PASSWORD"),
-        'HOST': env("DB_HOST"),
-        'PORT': env("DB_PORT"),
-    }
-}
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
