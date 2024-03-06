@@ -1,5 +1,6 @@
 from django.test import TestCase
 from rest_framework.test import APIClient  # Import this for API testing
+from application.models import CustomUser
 
 class Testsignup(TestCase):
     def setUp(self):
@@ -162,14 +163,15 @@ class Testsignup(TestCase):
         data_signin = {"email":"test@gmail.com", "password":"password1!D"}
         response = self.client.post('/application/signup/', data)
         self.assertEqual(response.status_code, 201) # Created user
-        response2 = self.client.post('/application/signin/', data_signin)
-        sign_in_response = self.client.post('/application/signin/', data_signin) # collect token
-        self.assertEqual(response2.status_code, 200) # Signed in successfuly
 
-        # Use the token in the Authorization header
-        token = sign_in_response.data['access']
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {token}')
-        response3 = self.client.post('/application/signout/')
+
+        response2 = self.client.post('/application/signin/', data_signin)
+        self.assertEqual(response2.status_code, 200) # Signed in successfuly
+        access = response2.data.get('access')
+        refresh_token = response2.data.get('refresh')
+        #self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {refresh_token}')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {access}')
+        response3 = self.client.post('/application/signout/',{'refresh': refresh_token})
         self.assertEqual(response3.status_code, 200) # Signed out
 
     def test_sifn_out_invalid_token(self):
@@ -186,9 +188,20 @@ class Testsignup(TestCase):
         response3 = self.client.post('/application/signout/', data_refresh)
         self.assertEqual(response3.status_code, 401) # Could not sign out
    
-    # def test_signin_success(self):
-    #     # Assuming you've created a user in `setUp`
-    #     data = {"email": "testsignin@example.com", "password": "strongpassword123"}
-    #     response = self.client.post('/application/signin/', data)
-    #     self.assertEqual(response.status_code, 200)
-    #     self.assertIn('access', response.data)
+  
+    ################ Delete users
+    def test_delete_user_success(self):
+        """
+        Delete a user by a logged in user
+
+        """
+        self.client = APIClient()
+
+        # Create a test user
+        self.user = CustomUser.objects.create_user(email='test@example.com',first_name="test",last_name="test", password='testpassword1!D')
+
+        self.client.force_authenticate(user=self.user)  # Simulate login
+        response = self.client.delete('/application/delete/')
+
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(CustomUser.objects.filter(pk=self.user.id).exists())

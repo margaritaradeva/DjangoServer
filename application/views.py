@@ -10,6 +10,8 @@ from rest_framework import status, permissions
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
 from django.db import IntegrityError
+from rest_framework.exceptions import ValidationError as DRFValidationError
+#from rest_framework_simplejwt.token_blacklist import OutstandingToken, BlacklistedToken
 from .managers import CustomUserManager
 from .models import CustomUser, get_user_by_email
 
@@ -23,16 +25,22 @@ class SignUp(APIView):
         try:
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
+
+                refresh_token = RefreshToken.for_user(user)
+                access_token = refresh_token.access_token
+
                 data = {
                     'id':user.id,
                     'first_name':user.first_name,
                     'last_name':user.last_name,
-                    'email':user.email
+                    'email':user.email,
+                    'refresh': str(refresh_token),
+                    'access': str(access_token),
                 }
                 return Response(data=data, status=status.HTTP_201_CREATED)
             else:
                 return Response({'detail':'Password does not meet the complexity requirements'},status=status.HTTP_400_BAD_REQUEST)
-        except ValidationError as e:
+        except DRFValidationError as e:
             return Response(e.detail, status.HTTP_409_CONFLICT)
         except IntegrityError as e:
             # Handle the unique constraint error
@@ -57,11 +65,12 @@ class SignIn(APIView):
         refresh_token = RefreshToken.for_user(user)
         access = refresh_token.access_token
         response = Response()
+        serializer = CustomUserSerializer(user)
         response.data = {
             'refresh': str(refresh_token),
             'access': str(access),
+            'user': serializer.data
         }
-
         response.status_code = status.HTTP_200_OK
         return response
         # JWT token
@@ -83,19 +92,29 @@ class SignOut(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self,request):
-        refresh_token = request.data.get('refresh_token')
-        if refresh_token is None:
-            return Response({}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            refresh_token = request.data['refresh']
+            token = RefreshToken(refresh_token)
+            if token is None:
+                return Response({}, status=status.HTTP_400_BAD_REQUEST)
 
+            # token_delete = OutstandingToken.objects.get(token=token) 
+            # token_delete.black()
+            resp = Response()
+            resp.data = {"message":"user logged out"}
+           
+            return Response(status=status.HTTP_200_OK)
+        except KeyError:
+         return Response(status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e: 
+            print(e) 
+            return Response(status=status.HTTP_400_BAD_REQUEST) 
+        
 
-        resp = Response()
-        resp.data = {"message":"user logged out"}
-
-        return resp
-
-class CustomTokenRefresh(TokenRefreshView):
-    def post(self,request, *args, **kwargs):
-        response = super().post(request, *args, **kwargs)
-        response.data['status'] = 'success'
-
-        return response
+class DeleteUser(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+    def delete(self,request):
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
