@@ -23,5 +23,4 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Admin site
     path('', views.home_view, name='home'),  # Home page route
     path('application/', include('application.urls')),  # Include application URLs
-    path('api/token/refresh/', views.CustomTokenRefresh.as_view(), name = "token_refresh"),
 ]
