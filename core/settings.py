@@ -37,7 +37,7 @@ DEBUG = True
 # settings.py
 #ALLOWED_HOSTS = ['expo-brushy-56de67f02740.herokuapp.com', 'localhost', '127.0.0.1']
 #LOCAL DEV
-ALLOWED_HOSTS = ['http://127.0.0.1:8000','127.0.0.1','*']
+ALLOWED_HOSTS = ['expo-brushy-56de67f02740.herokuapp.com','http://127.0.0.1:8000','127.0.0.1','*']
 SECURE_SSL_REDIRECT = not DEBUG # redirect all non-HTTPS requests to HTTPS, which is important for security on Heroku.
 
 
