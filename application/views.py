@@ -114,7 +114,7 @@ class SignOut(APIView):
 class DeleteUser(APIView):
     # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
-    def delete(self,request):
+    def post(self,request):
         email = request.data["email"]
         password = request.data["password"]
 
