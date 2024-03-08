@@ -116,7 +116,6 @@ class DeleteUser(APIView):
     # permission_classes = [IsAuthenticated]
     def post(self,request):
         email = request.data["email"]
-        password = request.data["password"]
 
         user = get_user_by_email(email=email)
 
