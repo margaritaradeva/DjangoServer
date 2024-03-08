@@ -103,8 +103,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # CHANGE TIME SETTINGS LATER
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
-    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=30),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=3),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=6),
 }
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
