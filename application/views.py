@@ -81,7 +81,7 @@ class isSignedIn(APIView):
     # authentication_classes = [JWTAuthentication]
     # permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def post(self, request):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
         serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time}, partial=True)
