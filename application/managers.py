@@ -48,6 +48,7 @@ class CustomUserManager(BaseUserManager):
         user.last_name = last_name
         # Password hashing
         user.set_password(password)
+        user.total_brush_time = 0
         # Set the remaining fields for the user
         user.is_active = True
         user.is_staff = is_staff

@@ -21,7 +21,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
         user = CustomUser.objects.create(
             first_name = data['first_name'],
             last_name = data['last_name'],
-            email = data['email']
+            email = data['email'],
+            total_brush_time = data['total_brush_time']
         )
         user.set_password(data['password'])
         user.save()
