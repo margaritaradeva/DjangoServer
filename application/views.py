@@ -87,8 +87,8 @@ class isSignedIn(APIView):
         return Response({"total_brush_time": serializer.data['total_brush_time']}, status=status.HTTP_200_OK)
 
 class update_total_brush_time(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def post(self, request):
         added_time = request.data.get('added_time',0)
