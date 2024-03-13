@@ -84,7 +84,7 @@ class isSignedIn(APIView):
     def get(self, request):
         user=request.user
         serializer = CustomUserSerializer(user)
-        return Response({"message": "User is authenticated"}, status=status.HTTP_200_OK)
+        return Response({"total_brush_time": serializer.data['total_brush_time']}, status=status.HTTP_200_OK)
 
 class update_total_brush_time(APIView):
     authentication_classes = [JWTAuthentication]
