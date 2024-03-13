@@ -29,12 +29,6 @@ class CustomUserSerializer(serializers.Serializer):
         return value
     
    
-    def validate(self, data):
-        """
-        Overrides the default validate method to include password validation
-        """
-        validate_password(data.get('password', ''))   # Validate if the password is present
-        return super().validate(data)
     
     def change(self,atr):
         pass

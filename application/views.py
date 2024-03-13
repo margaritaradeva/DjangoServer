@@ -91,15 +91,15 @@ class update_total_brush_time(APIView):
     # permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        added_time = request.data.get('added_time',0)
+        added_time = request.data["added_time"]
         email = request.data["email"]
         user = get_user_by_email(email=email)
         if added_time is not None:
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
-            if serializer.is_valid():
+            try:
                 serializer.save()
                 return Response(serializer.data, status=status.HTTP_200_OK)
-            else: 
+            except:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
            
 
