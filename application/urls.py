@@ -13,4 +13,5 @@ urlpatterns = [
     path('signout/', views.SignOut.as_view(), name='signout'),
     path('delete/', views.DeleteUser.as_view(), name='delete'),
     path('token/refresh/', TokenRefreshView.as_view(), name="token_refresh"),
+    path('update_brushtime/', views.update_total_brush_time.as_view(), name="update_brush_time"),
 ]

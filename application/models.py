@@ -77,6 +77,7 @@ class CustomUser(AbstractUser):
     password (CharField): User's password-not declared here as it is by dafault from django
     email (EmailField): The email field used for authentication
     thumbnail (ImageField): An optional image fielfd for storing user thumbnail (profile pic)
+    total_brush_time(IntegerField): Total amount of time a user has brushed their teeth for
     Methods:
     __str__: Returs a string representation of the user, which is the user's email address
     """
@@ -90,6 +91,8 @@ class CustomUser(AbstractUser):
     # Specify the unique identifier to be the email not username
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = ["first_name", "last_name"]  # Empty as email is already enforced
+    # Total amount of time that a user has brushed their teeth
+    total_brush_time = models.IntegerField(default=0)
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately

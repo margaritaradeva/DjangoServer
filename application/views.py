@@ -10,6 +10,7 @@ from rest_framework import status, permissions
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer
 from django.db import IntegrityError
+from datetime import timedelta
 from rest_framework.exceptions import ValidationError as DRFValidationError
 #from rest_framework_simplejwt.token_blacklist import OutstandingToken, BlacklistedToken
 from .managers import CustomUserManager
@@ -85,6 +86,21 @@ class isSignedIn(APIView):
         serializer = CustomUserSerializer(user)
         return Response({"message": "User is authenticated"}, status=status.HTTP_200_OK)
 
+class update_total_brush_time(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        added_time = request.data.get('added_time',0)
+        if added_time is not None:
+            user= request.user
+            serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            else: 
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+           
 
 
 class SignOut(APIView):
