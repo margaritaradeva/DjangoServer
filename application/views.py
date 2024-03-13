@@ -92,8 +92,9 @@ class update_total_brush_time(APIView):
 
     def post(self, request):
         added_time = request.data.get('added_time',0)
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
         if added_time is not None:
-            user= request.user
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
             if serializer.is_valid():
                 serializer.save()
