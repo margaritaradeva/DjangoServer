@@ -78,8 +78,8 @@ class SignIn(APIView):
 
 class isSignedIn(APIView):
         # can only be used if the user is authenticated
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user=request.user
