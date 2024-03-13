@@ -82,7 +82,8 @@ class isSignedIn(APIView):
     # permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        user=request.user
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
         serializer = CustomUserSerializer(user)
         return Response({"total_brush_time": serializer.data['total_brush_time']}, status=status.HTTP_200_OK)
 
