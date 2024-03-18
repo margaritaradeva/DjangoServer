@@ -42,7 +42,7 @@ class SignUp(APIView):
             else:
                 return Response({'detail':'Password does not meet the complexity requirements'},status=status.HTTP_400_BAD_REQUEST)
         except DRFValidationError as e:
-            return Response(e.detail, status.HTTP_409_CONFLICT)
+            return Response(e.detail, status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
             # Handle the unique constraint error
             return Response({'detail': 'A user with that email already exists.'}, status=status.HTTP_409_CONFLICT)
