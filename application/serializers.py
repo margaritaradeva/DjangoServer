@@ -17,7 +17,7 @@ class CustomUserSerializer(serializers.Serializer):
             first_name = data['first_name'],
             last_name = data['last_name'],
             email = data['email'],
-            total_brush_time = data['total_brush_time']
+            total_brush_time = data.get('total_brush_time',0)
         )
         user.set_password(data['password'])
         user.save()
