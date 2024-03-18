@@ -40,7 +40,7 @@ class SignUp(APIView):
                 }
                 return Response(data=data, status=status.HTTP_201_CREATED)
             else:
-                return Response({'detail':'Password does not meet the complexity requirements'},status=status.HTTP_400_BAD_REQUEST)
+                return Response({'detail':'Password does not meet the complexity requirements'},status=status.HTTP_403_FORBIDDEN)
         except DRFValidationError as e:
             return Response(e.detail, status.HTTP_400_BAD_REQUEST)
         except IntegrityError as e:
