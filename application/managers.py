@@ -13,7 +13,7 @@ class CustomUserManager(BaseUserManager):
     is a necessary step as I need to handle the case where the email is the unique identifier.
     """
 
-    def create_user(self, first_name: str, last_name: str, email: str, password: str, is_staff = False, is_superuser = False):
+    def create_user(self, first_name: str, last_name: str, email: str, password: str, total_brush_time=0, is_staff = False, is_superuser = False):
         """
         Create and save a user with the provided email and password
 
@@ -48,7 +48,7 @@ class CustomUserManager(BaseUserManager):
         user.last_name = last_name
         # Password hashing
         user.set_password(password)
-        user.total_brush_time = 0
+        user.total_brush_time = total_brush_time
         # Set the remaining fields for the user
         user.is_active = True
         user.is_staff = is_staff
