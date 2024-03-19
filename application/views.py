@@ -106,7 +106,6 @@ class update_total_brush_time(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
            
 
-
 class SignOut(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
@@ -132,13 +131,40 @@ class SignOut(APIView):
         
 
 class DeleteUser(APIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def post(self,request):
-        email = request.data["email"]
+        # email = request.data["email"]
 
-        user = get_user_by_email(email=email)
+        # user = get_user_by_email(email=email)
 
-        # user = request.user
+        user = request.user
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+    
+class SetParentPin(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user=request.user
+        pin = request.data.get("parent_pin")
+        if not pin or not pin.isdigit() or len(pin) != 6:
+            return Response({"error":"The PIN mist be exactly 6 digits"},status=status.HTTP_400_BAD_REQUEST)
+        user.set_parent_pin(pin)
+        user.save()
+        return Response({"message":"Parent PIN was set successfully."}, status=status.HTTP_200_OK)
+    
+
+class CheckParentPIN(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        user=request.user
+        input_pin = request.data.get("parent_pin")
+
+        if user.parent_pin == input_pin:
+            return Response({"message":"The PIN is correct"},status=status.HTTP_200_OK)
+        else:
+            return Response({"message":"The PIN is incorrect"},status=status.HTTP_400_BAD_REQUEST)
