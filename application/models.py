@@ -78,6 +78,7 @@ class CustomUser(AbstractUser):
     email (EmailField): The email field used for authentication
     thumbnail (ImageField): An optional image fielfd for storing user thumbnail (profile pic)
     total_brush_time(IntegerField): Total amount of time a user has brushed their teeth for
+    parent_pin(CharField, max_length=6): Pin to access the parent interface
     Methods:
     __str__: Returs a string representation of the user, which is the user's email address
     """
@@ -93,6 +94,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ["first_name", "last_name"]  # Empty as email is already enforced
     # Total amount of time that a user has brushed their teeth
     total_brush_time = models.IntegerField(default=0)
+    parent_pin = models.CharField(max_length=6, null=True, blank=True)
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately
