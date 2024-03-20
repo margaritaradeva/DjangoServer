@@ -14,4 +14,6 @@ urlpatterns = [
     path('delete/', views.DeleteUser.as_view(), name='delete'),
     path('token/refresh/', TokenRefreshView.as_view(), name="token_refresh"),
     path('update_brushtime/', views.update_total_brush_time.as_view(), name="update_brush_time"),
+    path('setPin/', views.SetParentPin.as_view(), name="set_pin"),
+    path('isPinSet/', views.CheckIfPinIsSet.as_view(), name="is_pin_set"),
 ]

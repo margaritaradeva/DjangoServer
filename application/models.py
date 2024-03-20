@@ -95,6 +95,7 @@ class CustomUser(AbstractUser):
     # Total amount of time that a user has brushed their teeth
     total_brush_time = models.IntegerField(default=0)
     parent_pin = models.CharField(max_length=6, null=True, blank=True)
+    is_pin_set = models.BooleanField(default=False)
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately

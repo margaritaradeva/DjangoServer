@@ -152,6 +152,7 @@ class SetParentPin(APIView):
         if not pin or not pin.isdigit() or len(pin) != 6:
             return Response({"error":"The PIN mist be exactly 6 digits"},status=status.HTTP_400_BAD_REQUEST)
         user.set_parent_pin(pin)
+        user.is_pin_set = True
         user.save()
         return Response({"message":"Parent PIN was set successfully."}, status=status.HTTP_200_OK)
     
@@ -168,3 +169,12 @@ class CheckParentPIN(APIView):
             return Response({"message":"The PIN is correct"},status=status.HTTP_200_OK)
         else:
             return Response({"message":"The PIN is incorrect"},status=status.HTTP_400_BAD_REQUEST)
+        
+
+class CheckIfPinIsSet(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self,request):
+        user=request.user
+        return Response({"is_pin_set": user.is_pin_set}, status=status.HTTP_200_OK)

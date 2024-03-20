@@ -12,10 +12,11 @@ class CustomUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True) # Don't ever want to return a password in an API response 
     total_brush_time = serializers.IntegerField()
     parent_pin = serializers.CharField(write_only=True, required=False, allow_blank=True, max_length=6,min_length=6)
-    
+    is_pin_set = serializers.BooleanField(read_only=True)
+
     class Meta:
         model=CustomUser
-        fields = ('id','first_name','last_name','email','password','total_brush_time','parent_pin')
+        fields = ('id','first_name','last_name','email','password','total_brush_time','parent_pin'),'is_pin_set'
         extra_kwargs = {'password': {'write_only':True}}
    
     def create(self, data):
