@@ -151,7 +151,7 @@ class SetParentPin(APIView):
         pin = request.data.get("parent_pin")
         if not pin or not pin.isdigit() or len(pin) != 6:
             return Response({"error":"The PIN mist be exactly 6 digits"},status=status.HTTP_400_BAD_REQUEST)
-        user.parent_pin(pin)
+        user.parent_pin = pin
         user.is_pin_set = True
         user.save()
         return Response({"message":"Parent PIN was set successfully."}, status=status.HTTP_200_OK)
