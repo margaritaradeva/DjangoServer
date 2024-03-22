@@ -16,4 +16,5 @@ urlpatterns = [
     path('setPin/', views.SetParentPin.as_view(), name="set_pin"),
     path('isPinSet/', views.CheckIfPinIsSet.as_view(), name="is_pin_set"),
     path('checkPin/', views.CheckParentPIN.as_view(), name="check_pin"),
+    path('reauthenticate/', views.Reuthenticate.as_view(), name="reauthenticate"),
 ]

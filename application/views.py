@@ -75,6 +75,19 @@ class SignIn(APIView):
         response.status_code = status.HTTP_200_OK
         return response
         # JWT token
+class Reuthenticate(APIView):
+    def post(self,request):
+        email = request.data['email']
+        password = request.data['password']
+        user = get_user_by_email(email=email)
+
+        if user is None:
+            raise exceptions.AuthenticationFailed("Invalid credentials")
+        if not user.check_password(raw_password=password):
+            raise exceptions.AuthenticationFailed("Invalid credentials")
+        
+        return Response(status=status.HTTP_200_OK)
+
 
 class isSignedIn(APIView):
         # can only be used if the user is authenticated
