@@ -11,12 +11,13 @@ class CustomUserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True) # Don't ever want to return a password in an API response 
     total_brush_time = serializers.IntegerField()
+    current_level = serializers.IntegerField()
     parent_pin = serializers.CharField(write_only=True, required=False, allow_blank=True, max_length=6,min_length=6)
     is_pin_set = serializers.BooleanField(read_only=True)
 
     class Meta:
         model=CustomUser
-        fields = ('id','first_name','last_name','email','password','total_brush_time','parent_pin','is_pin_set')
+        fields = ('id','first_name','last_name','email','password','total_brush_time','current_level','parent_pin','is_pin_set')
         extra_kwargs = {'password': {'write_only':True}}
    
     def create(self, data):
@@ -27,7 +28,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             last_name = data['last_name'],
             email = data['email'],
             password=data['password'],
-            total_brush_time = data.get('total_brush_time',0)
+            total_brush_time = data.get('total_brush_time',0),
+            current_level = data.get('current_level', 1)
         )
 
         if parent_pin is not None:

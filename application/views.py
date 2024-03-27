@@ -118,7 +118,23 @@ class update_total_brush_time(APIView):
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
            
+class UpdateLevel(APIView):
 
+    def post(self,request):
+        update_level_by = request.data.get("update_level_by", None)
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
+        if update_level_by is not None:
+            serializer = CustomUserSerializer(user, data={'current_level':user.current_level + int(update_level_by)}, partial=True)
+        try:
+            user.current_level += int(update_level_by)
+            user.save()
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        
 class SignOut(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]

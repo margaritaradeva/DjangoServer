@@ -94,6 +94,7 @@ class CustomUser(AbstractUser):
     REQUIRED_FIELDS = ["first_name", "last_name"]  # Empty as email is already enforced
     # Total amount of time that a user has brushed their teeth
     total_brush_time = models.IntegerField(default=0)
+    current_level = models.IntegerField(default=1)
     parent_pin = models.CharField(max_length=6, null=True, blank=True)
     is_pin_set = models.BooleanField(default=False)
    # is_verified = models.BooleanField(default=False)
