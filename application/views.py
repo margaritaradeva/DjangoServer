@@ -134,7 +134,23 @@ class UpdateLevel(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         
-        
+class UpdateLevelXP(APIView):
+    def post(self, request):
+        update_current_xp = request.data.get("current_level_xp", None)
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
+        if update_current_xp is not None:
+            serializer = CustomUserSerializer(user, data={'current_level_xp':int(update_current_xp)}, partial=True)
+        try:
+            user.current_level_xp = int(update_current_xp)
+            user.save()
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class SignOut(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
