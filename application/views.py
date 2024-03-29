@@ -164,8 +164,9 @@ class UpdateLevelMaxXP(APIView):
             user.save()
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            print(e)
+            return Response({'detail':str(e)},status=status.HTTP_400_BAD_REQUEST)
         
 
 class SignOut(APIView):
