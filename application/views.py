@@ -157,7 +157,7 @@ class UpdateLevelMaxXP(APIView):
         user = get_user_by_email(email=email)
 
         if update_current_level_max is not None:
-            serialzier = CustomUserSerializer(user, data={'current_level_max_xp'@int(update_current_level_max)}, partial=True)
+            serialzier = CustomUserSerializer(user, data={'current_level_max_xp':int(update_current_level_max)}, partial=True)
 
         try:
             user.current_level_max_xp = int(update_current_level_max)
