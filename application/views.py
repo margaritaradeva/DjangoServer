@@ -157,15 +157,15 @@ class UpdateLevelMaxXP(APIView):
         user = get_user_by_email(email=email)
 
         if update_current_level_max is not None:
-            serialzier = CustomUserSerializer(user, data={'current_level_max_xp':int(update_current_level_max)}, partial=True)
+            serializer = CustomUserSerializer(user, data={'current_level_max_xp':int(update_current_level_max)}, partial=True)
 
         try:
             user.current_level_max_xp = int(update_current_level_max)
             user.save()
-            serialzier = CustomUserSerializer(user)
-            return Response(serialzier.data, status=status.HTTP_200_OK)
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         except:
-            return Response(serialzier.errors,status=status.HTTP_400_BAD_REQUEST)
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
         
 
 class SignOut(APIView):
