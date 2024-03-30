@@ -50,7 +50,7 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.total_brush_time = total_brush_time
         user.current_level = current_level
-        user.current_level_xp = current_level
+        user.current_level_xp = current_level_xp
         user.current_level_max_xp = current_level_max_xp
         # Set the remaining fields for the user
         user.is_active = True
