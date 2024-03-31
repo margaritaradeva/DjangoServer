@@ -149,6 +149,26 @@ class UpdateLevelXP(APIView):
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+class MiniShopPhoto(APIView):
+    def post(self, request):
+        update_image_id = request.data.get('image_id', None)
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
+        if update_image_id is not None:
+            serializer = CustomUserSerializer(user, data={'image_id': int(update_image_id)}, partial=True)
+        try: 
+            user.image_id = int(update_image_id)
+            user.save()
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'detail':str(e)},status=status.HTTP_400_BAD_REQUEST)
+        
+    def get(self,request):
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
+        return Response({"image_id": user.image_id}, status=status.HTTP_200_OK)    
+
 
 class UpdateLevelMaxXP(APIView):
     def post(self, request):

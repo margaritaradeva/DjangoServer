@@ -97,6 +97,7 @@ class CustomUser(AbstractUser):
     current_level = models.IntegerField(default=1)
     current_level_xp = models.IntegerField(default=0)
     current_level_max_xp = models.IntegerField(default=120)
+    image_id = models.IntegerField(default=1)
     parent_pin = models.CharField(max_length=6, null=True, blank=True)
     is_pin_set = models.BooleanField(default=False)
    # is_verified = models.BooleanField(default=False)
