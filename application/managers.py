@@ -13,7 +13,9 @@ class CustomUserManager(BaseUserManager):
     is a necessary step as I need to handle the case where the email is the unique identifier.
     """
 
-    def create_user(self, first_name: str, last_name: str, email: str, password: str, total_brush_time=0, current_level=1, current_level_xp=0, current_level_max_xp=120, image_id=1, is_staff = False, is_superuser = False):
+    def create_user(self, first_name: str, last_name: str, email: str, password: str, total_brush_time=0,
+                     current_level=1, current_level_xp=0, current_level_max_xp=120, image_id=1,
+                      current_streak = 0, max_streak = 0, total_brushes = 0, is_staff = False, is_superuser = False):
         """
         Create and save a user with the provided email and password
 
@@ -53,6 +55,9 @@ class CustomUserManager(BaseUserManager):
         user.current_level_xp = current_level_xp
         user.current_level_max_xp = current_level_max_xp
         user.image_id = image_id
+        user.current_streak = current_streak
+        user.max_streak = max_streak
+        user.total_brushes = total_brushes
         # Set the remaining fields for the user
         user.is_active = True
         user.is_staff = is_staff

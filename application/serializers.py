@@ -17,10 +17,14 @@ class CustomUserSerializer(serializers.ModelSerializer):
     parent_pin = serializers.CharField(write_only=True, required=False, allow_blank=True, max_length=6,min_length=6)
     is_pin_set = serializers.BooleanField(read_only=True)
     image_id = serializers.IntegerField()
+    current_streak = serializers.IntegerField()
+    max_streak = serializers.IntegerField()
+    total_brushes = serializers.IntegerField()
 
     class Meta:
         model=CustomUser
-        fields = ('id','first_name','last_name','email','password','total_brush_time','current_level','current_level_xp','current_level_max_xp','image_id','parent_pin','is_pin_set')
+        fields = ('id','first_name','last_name','email','password','total_brush_time','current_level','current_level_xp','current_level_max_xp','image_id',
+                  'current_streak','max_streak','total_brushes','parent_pin','is_pin_set')
         extra_kwargs = {'password': {'write_only':True}}
    
     def create(self, data):
@@ -35,7 +39,10 @@ class CustomUserSerializer(serializers.ModelSerializer):
             current_level = data.get('current_level', 1),
             current_level_xp = data.get('current_level_xp', 0),
             current_level_max_xp = data.get('current_level_max_xp', 120),
-            image_id = data.get('image_id', 1)
+            image_id = data.get('image_id', 1),
+            current_streak = data.get('current_streak',0),
+            max_streak = data.get('max_streak',0),
+            total_brushes = data.get('total_brushes',0)
         )
 
         if parent_pin is not None:

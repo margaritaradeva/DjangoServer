@@ -164,11 +164,7 @@ class MiniShopPhoto(APIView):
         except Exception as e:
             return Response({'detail':str(e)},status=status.HTTP_400_BAD_REQUEST)
         
-    def get(self,request):
-        email = request.data["email"]
-        user = get_user_by_email(email=email)
-        return Response({"image_id": user.image_id}, status=status.HTTP_200_OK)    
-
+   
 
 class UpdateLevelMaxXP(APIView):
     def post(self, request):
@@ -239,6 +235,24 @@ class SetParentPin(APIView):
         user.save()
         return Response({"message":"Parent PIN was set successfully."}, status=status.HTTP_200_OK)
     
+class Statistics(APIView):
+    def post(self, request):
+        update_current_streak_by = request.data.get("update_current_streak_by", None)
+        update_max_streak_by = request.data.get("update_max_streak_by", None)
+        update_total_brushes_by = request.data.get("update_total_brushes_by", None)
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
+       
+        try:
+            user.current_streak += int(update_current_streak_by)
+            user.max_streak += int(update_max_streak_by)
+            user.total_brushes += int(update_total_brushes_by)
+            user.save()
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class CheckParentPIN(APIView):
     authentication_classes = [JWTAuthentication]
