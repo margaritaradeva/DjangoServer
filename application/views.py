@@ -141,12 +141,12 @@ class UpdateStreak(APIView):
                      user.current_streak  = 1
                      user.is_pin_set=False
             else:
-                user.current_streak += 3
+                user.current_streak += 1
             
 
-            # if user.current_streak > user.max_streak:
-            #     user.max_streak = user.current_streak
-            # user.last_active_date = today
+            if user.current_streak > user.max_streak:
+                user.max_streak = user.current_streak
+            user.last_active_date = today
             # user.save()
             # logger.debug(f"After update - Current streak: {user.current_streak}, Is PIN set: {user.is_pin_set}")
             
