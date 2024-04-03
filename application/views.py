@@ -18,7 +18,8 @@ from .models import CustomUser, get_user_by_email
 from django.utils import timezone
 import logging
 
-logger = logging.getLogger(__name__) 
+logger = logging.getLogger('application') 
+logger.debug('This is a debug message')
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
