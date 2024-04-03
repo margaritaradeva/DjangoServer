@@ -112,20 +112,20 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
     validators = [UnicodeUsernameValidator, validate_password]
 
-    def update_streak(user):
+    def update_streak(self):
          today = timezone.now().date()
-         if user.last_active_date:
-              if today - user.last_active_date == timedelta(minutes=1):
-                   user.current_streak += 1
-              elif today - user.last_active_date > timedelta(minutes=1):
-                   user.current_streak  = 1
+         if self.last_active_date:
+              if today - self.last_active_date == timedelta(minutes=1):
+                   self.current_streak += 1
+              elif today - self.last_active_date > timedelta(minutes=1):
+                   self.current_streak  = 1
          else:
-              user.current_streak = 1
+              self.current_streak = 1
 
-         if user.current_streak > user.max_streak:
-              user.max_streak = user.current_streak
-         user.last_active_date = today
-         user.save()
+         if self.current_streak > self.max_streak:
+              self.max_streak = self.current_streak
+         self.last_active_date = today
+         self.save()
 
 
 
