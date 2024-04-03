@@ -131,6 +131,7 @@ class update_total_brush_time(APIView):
                    user.current_streak  = 1
          else:
               user.current_streak = 1
+              user.is_pin_set=true
 
          if user.current_streak > user.max_streak:
               user.max_streak = user.current_streak
