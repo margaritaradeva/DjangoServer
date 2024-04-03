@@ -115,9 +115,9 @@ class CustomUser(AbstractUser):
     def update_streak(self):
          today = timezone.now().date()
          if self.last_active_date:
-              if today - self.last_active_date == timedelta(minutes=1):
+              if today - self.last_active_date == timedelta(days=1):
                    self.current_streak += 1
-              elif today - self.last_active_date > timedelta(minutes=1):
+              elif today - self.last_active_date > timedelta(days=1):
                    self.current_streak  = 1
          else:
               self.current_streak = 1
