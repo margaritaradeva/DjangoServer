@@ -24,6 +24,8 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 from django.contrib.auth.validators import UnicodeUsernameValidator
 from .managers import CustomUserManager
+from datetime import timedelta
+from django.utils import timezone
 
 def upload_thumbnail(instance, filename):
     """
@@ -103,13 +105,29 @@ class CustomUser(AbstractUser):
     total_brushes = models.IntegerField(default=0)
     parent_pin = models.CharField(max_length=6, null=True, blank=True)
     is_pin_set = models.BooleanField(default=False)
+    last_active_date = models.DateField(null=True, blank=True)
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately
     objects = CustomUserManager()
     validators = [UnicodeUsernameValidator, validate_password]
 
-    
+    def update_streak(user):
+         today = timezone.now().date()
+         if user.last_active_date:
+              if today - user.last_active_date == timedelta(minutes=1):
+                   user.current_streak += 1
+              elif today - user.last_active_date > timedelta(minutes=1):
+                   user.current_streak  = 1
+         else:
+              user.current_streak = 1
+
+         if user.current_streak > user.max_streak:
+              user.max_streak = user.current_streak
+         user.last_active_date = today
+         user.save()
+
+
 
     def __str__(self):
         """

@@ -20,11 +20,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     current_streak = serializers.IntegerField()
     max_streak = serializers.IntegerField()
     total_brushes = serializers.IntegerField()
+    last_active_date = serializers.DateField(read_only=True)
 
     class Meta:
         model=CustomUser
         fields = ('id','first_name','last_name','email','password','total_brush_time','current_level','current_level_xp','current_level_max_xp','image_id',
-                  'current_streak','max_streak','total_brushes','parent_pin','is_pin_set')
+                  'current_streak','max_streak','total_brushes','parent_pin','is_pin_set', 'last_active_date')
         extra_kwargs = {'password': {'write_only':True}}
    
     def create(self, data):

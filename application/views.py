@@ -15,6 +15,7 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 #from rest_framework_simplejwt.token_blacklist import OutstandingToken, BlacklistedToken
 from .managers import CustomUserManager
 from .models import CustomUser, get_user_by_email
+from django.utils import timezone
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -112,6 +113,7 @@ class update_total_brush_time(APIView):
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
             try:
                 user.total_brush_time += int(added_time)
+                user.last_active_date = timezone.now().date()
                 user.save()
                 serializer = CustomUserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
