@@ -18,7 +18,7 @@ from .models import CustomUser, get_user_by_email
 from django.utils import timezone
 import logging
 
-logging.basicConfig(filename='app.log', level=logging.DEBUG) 
+logger = logging.getLogger(__name__) 
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -129,9 +129,9 @@ class UpdateStreak(APIView):
     def post(self, request):
          email = request.data["email"]
          user = get_user_by_email(email=email)
-         logging.debug(f"Initial current_streak: {user.current_streak}")
          try:
             today = timezone.now().date()
+            logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date:
                 if today - user.last_active_date == timedelta(days=1):
                     user.current_streak += 1
@@ -146,8 +146,8 @@ class UpdateStreak(APIView):
             if user.current_streak > user.max_streak:
                 user.max_streak = user.current_streak
             user.last_active_date = today
-            logging.debug(f"Updated current_streak: {user.current_streak}")
             user.save()
+            logger.debug(f"After update - Current streak: {user.current_streak}, Is PIN set: {user.is_pin_set}")
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
          except Exception as e: 

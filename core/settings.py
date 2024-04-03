@@ -120,6 +120,28 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
 ############# LOCAL 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        # Configure your application's logger
+        '__main__': {  # Use '__main__' for the root logger or specify your module's name
+            'handlers': ['console'],
+            'level': 'DEBUG',  # Set to 'DEBUG' to capture all logs
+        },
+    },
+}
+
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
