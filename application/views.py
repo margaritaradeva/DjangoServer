@@ -16,6 +16,9 @@ from rest_framework.exceptions import ValidationError as DRFValidationError
 from .managers import CustomUserManager
 from .models import CustomUser, get_user_by_email
 from django.utils import timezone
+import logging
+
+logging.basicConfig(filename='app.log', level=logging.DEBUG) 
 
 def home_view(request):
     return HttpResponse("Welcome to the home page!")
@@ -126,6 +129,7 @@ class UpdateStreak(APIView):
     def post(self, request):
          email = request.data["email"]
          user = get_user_by_email(email=email)
+         logging.debug(f"Initial current_streak: {user.current_streak}")
          try:
             today = timezone.now().date()
             if user.last_active_date:
@@ -142,6 +146,7 @@ class UpdateStreak(APIView):
             if user.current_streak > user.max_streak:
                 user.max_streak = user.current_streak
             user.last_active_date = today
+            logging.debug(f"Updated current_streak: {user.current_streak}")
             user.save()
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
