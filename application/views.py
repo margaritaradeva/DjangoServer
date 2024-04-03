@@ -134,16 +134,15 @@ class UpdateStreak(APIView):
             today = timezone.now().date()
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date is not None and user.current_streak !=0:
-                pass
-            #     if today - user.last_active_date == timedelta(days=1):
-            #         user.current_streak += 1
-            #         user.is_pin_set=True
-            #     elif today - user.last_active_date > timedelta(days=1):
-            #         user.current_streak  = 1
-            #         user.is_pin_set=True
+                 if today - user.last_active_date == timedelta(days=1):
+                     user.current_streak += 1
+                    
+                 elif today - user.last_active_date > timedelta(days=1):
+                     user.current_streak  = 1
+                     user.is_pin_set=False
             else:
-                user.current_streak = 1
-                user.is_pin_set=True
+                user.current_streak += 3
+            
 
             # if user.current_streak > user.max_streak:
             #     user.max_streak = user.current_streak
