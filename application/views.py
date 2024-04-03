@@ -109,7 +109,7 @@ class update_total_brush_time(APIView):
         added_time =request.data.get("added_time", None)
         email = request.data["email"]
         user = get_user_by_email(email=email)
-        self.update_streak(user)
+       
 
         if added_time is not None:
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
@@ -121,24 +121,35 @@ class update_total_brush_time(APIView):
                 return Response(serializer.data, status=status.HTTP_200_OK)
             except:
                 return Response(status=status.HTTP_400_BAD_REQUEST)
-           
-    def update_streak(self, user):
-         today = timezone.now().date()
-         if user.last_active_date:
-              if today - user.last_active_date == timedelta(days=1):
-                   user.current_streak += 1
-                   user.is_pin_set=True
-              elif today - user.last_active_date > timedelta(days=1):
-                   user.current_streak  = 1
-                   user.is_pin_set=True
-         else:
-              user.current_streak = 1
-              user.is_pin_set=True
+class UpdateStreak(APIView):
 
-         if user.current_streak > user.max_streak:
-              user.max_streak = user.current_streak
-         user.last_active_date = today
-         user.save()
+    def post(self, request):
+         email = request.data["email"]
+         user = get_user_by_email(email=email)
+         try:
+            today = timezone.now().date()
+            if user.last_active_date:
+                if today - user.last_active_date == timedelta(days=1):
+                    user.current_streak += 1
+                    user.is_pin_set=True
+                elif today - user.last_active_date > timedelta(days=1):
+                    user.current_streak  = 1
+                    user.is_pin_set=True
+            else:
+                user.current_streak = 1
+                user.is_pin_set=True
+
+            if user.current_streak > user.max_streak:
+                user.max_streak = user.current_streak
+            user.last_active_date = today
+            user.save()
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+         except Exception as e: 
+            print(e) 
+            return Response(status=status.HTTP_400_BAD_REQUEST) 
+
+
 
 
 class UpdateLevel(APIView):
