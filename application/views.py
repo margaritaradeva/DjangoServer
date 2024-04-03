@@ -131,24 +131,24 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          try:
-            today = timezone.now().date()
-            logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
-            if user.last_active_date:
-                if today - user.last_active_date == timedelta(days=1):
-                    user.current_streak += 1
-                    user.is_pin_set=True
-                elif today - user.last_active_date > timedelta(days=1):
-                    user.current_streak  = 1
-                    user.is_pin_set=True
-            else:
-                user.current_streak = 1
-                user.is_pin_set=True
+            # today = timezone.now().date()
+            # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
+            # if user.last_active_date:
+            #     if today - user.last_active_date == timedelta(days=1):
+            #         user.current_streak += 1
+            #         user.is_pin_set=True
+            #     elif today - user.last_active_date > timedelta(days=1):
+            #         user.current_streak  = 1
+            #         user.is_pin_set=True
+            # else:
+            #     user.current_streak = 1
+            #     user.is_pin_set=True
 
-            if user.current_streak > user.max_streak:
-                user.max_streak = user.current_streak
-            user.last_active_date = today
-            user.save()
-            logger.debug(f"After update - Current streak: {user.current_streak}, Is PIN set: {user.is_pin_set}")
+            # if user.current_streak > user.max_streak:
+            #     user.max_streak = user.current_streak
+            # user.last_active_date = today
+            # user.save()
+            # logger.debug(f"After update - Current streak: {user.current_streak}, Is PIN set: {user.is_pin_set}")
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
          except Exception as e: 
