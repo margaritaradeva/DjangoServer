@@ -127,8 +127,10 @@ class update_total_brush_time(APIView):
          if user.last_active_date:
               if today - user.last_active_date == timedelta(days=1):
                    user.current_streak += 1
+                   user.is_pin_set=True
               elif today - user.last_active_date > timedelta(days=1):
                    user.current_streak  = 1
+                   user.is_pin_set=True
          else:
               user.current_streak = 1
               user.is_pin_set=True
