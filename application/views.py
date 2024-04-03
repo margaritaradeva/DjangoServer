@@ -109,7 +109,7 @@ class update_total_brush_time(APIView):
         added_time =request.data.get("added_time", None)
         email = request.data["email"]
         user = get_user_by_email(email=email)
-        user.update_streak()
+        user.update_streak(user)
         if added_time is not None:
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
             try:
