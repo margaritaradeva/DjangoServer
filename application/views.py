@@ -149,6 +149,8 @@ class UpdateStreak(APIView):
             # user.last_active_date = today
             # user.save()
             # logger.debug(f"After update - Current streak: {user.current_streak}, Is PIN set: {user.is_pin_set}")
+            user.current_streak = 1
+            user.save()
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
          except Exception as e: 
