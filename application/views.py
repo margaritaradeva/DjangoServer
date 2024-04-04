@@ -186,6 +186,20 @@ class UpdateStreak(APIView):
             print(e) 
             return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST) 
 
+class ChangeUserTesting(APIView):
+    def post(self,request):
+        email = request.data.get("email")
+        user = get_user_by_email(email=email)
+
+        user.current_streak=1
+        user.max_streak=3
+        user.total_brushes=4
+        user.total_brushes_morning=2
+        user.total_brushes_evening=3
+        user.percentage_morning = user.total_brushes_morning/user.total_brushes
+        user.percentage_evening = user.total_brushes_evening/user.total_brushes
+
+        return Response(status=status.HTTP_200_OK)
 
 class UpdateActivity(APIView):
 
