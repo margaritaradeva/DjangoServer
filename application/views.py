@@ -154,6 +154,7 @@ class UpdateStreak(APIView):
 
             if updated_streak == True:
                 time_now = timezone.now()
+                user.is_pin_set=False
                 
                 if time_now.hour<12:
                     type='morning'
