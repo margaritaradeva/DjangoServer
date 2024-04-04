@@ -114,7 +114,12 @@ class CustomUser(AbstractUser):
 
     streak_evening = models.IntegerField(default=0)
     max_streak_evening = models.IntegerField(default=0)
-    
+
+    total_brushes_morning = models.IntegerField(default=0)
+    total_brushes_evening = models.IntegerField(default=0)
+
+    percentage_morning = models.IntegerField(default=0)
+    percentage_evening = models.IntegerField(default=0)
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately
