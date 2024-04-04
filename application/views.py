@@ -15,7 +15,7 @@ import datetime
 from rest_framework.exceptions import ValidationError as DRFValidationError
 #from rest_framework_simplejwt.token_blacklist import OutstandingToken, BlacklistedToken
 from .managers import CustomUserManager
-from .models import CustomUser, get_user_by_email
+from .models import CustomUser, get_user_by_email, UserActivity
 from django.utils import timezone
 import logging
 
@@ -372,12 +372,11 @@ class CheckIfPinIsSet(APIView):
         return Response({"is_pin_set": user.is_pin_set}, status=status.HTTP_200_OK)
     
 
-class UserActivity(APIView):
+class UserActivities(APIView):
 
     def post(self,request):
         email = request.data["email"]
         user = get_user_by_email(email=email)
-
         activities = UserActivity.objects.filter(user=user)
         serializer = UserActivitySerializer(activities, many=True)
 

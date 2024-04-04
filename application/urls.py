@@ -24,5 +24,5 @@ urlpatterns = [
     path('statistics/', views.Statistics.as_view(), name="statistics"),
     path('updateStreak/', views.UpdateStreak.as_view(), name="update_streak"),
     path('updateActivity/', views.UpdateActivity.as_view(), name="update_activity"),
-    path('activities/',views.UserActivity.as_view(), name="user_activities"),
+    path('activities/',views.UserActivities.as_view(), name="user_activities"),
 ]
