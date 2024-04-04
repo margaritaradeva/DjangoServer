@@ -135,9 +135,6 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          updated_streak = False
-         yesterday = datetime.datetime(2024, 4, 3)
-         yesterday_date = yesterday.date()
-         user.last_active_date = yesterday_date
          try:
             today = datetime.date.today()
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
@@ -402,7 +399,7 @@ class UserActivities(APIView):
     def post(self,request):
         email = request.data["email"]
         user = get_user_by_email(email=email)
-        activities = UserActivity.objects.filter(user=user)
-        serializer = UserActivitySerializer(activities, many=True)
+        activity_dates = UserActivity.objects.fileter(user=user).values_list('activity_date',flat=True)
+        activity_dates_list = list(activity_dates)
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(activity_dates_list, status=status.HTTP_200_OK)
