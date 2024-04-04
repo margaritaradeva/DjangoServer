@@ -145,13 +145,15 @@ class CustomUser(AbstractUser):
 class UserActivity(models.Model):
      
      user=models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='activities')
-     activity_date = models.DateField()
+     activity_date = models.DateField(null=True, blank=True)
+     activity_time = models.DateTimeField(null=True, blank=True)
+
      activity_type = models.CharField(max_length=10, choices=(('morning', 'Morning'), ('evening', 'Evening'), ('both', 'Both')))
      class Meta:
           indexes = [
                models.Index(fields=['user','activity_date']),
           ]
-          unique_together = ('user', 'activity_date', 'activity_type')  # Ensuring uniqueness
+          unique_together = ('user', 'activity_date','activity_time', 'activity_type')  # Ensuring uniqueness
     
      def __str__(self):
-          return f"{self.user.email} - {self.activity_date} - {self.activity_type}"
+          return f"{self.user.email} - {self.activity_date} - {self.activity_time} - {self.activity_type}"
