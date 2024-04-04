@@ -135,7 +135,12 @@ class UpdateStreak(APIView):
     def post(self, request):
          email = request.data["email"]
          user = get_user_by_email(email=email)
-         updated_streak = False
+
+
+
+         updated_streak = True
+
+
           ######## delete later
          yesterday = datetime.datetime(2024, 4, 1)
          yesterday_date = yesterday.date()
