@@ -142,7 +142,7 @@ class UpdateStreak(APIView):
 
 
           ######## delete later
-         yesterday = datetime.datetime(2024, 4, 3)
+         yesterday = datetime.datetime(2024, 4, 6)
          yesterday_date = yesterday.date()
          user.last_active_date = yesterday_date
         ###################################
@@ -150,7 +150,7 @@ class UpdateStreak(APIView):
             #today = datetime.date.today()
 
             #########delete later
-            custom_date = datetime.datetime(2024, 4, 3)
+            custom_date = datetime.datetime(2024, 4, 6)
             today = custom_date.date()
             custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=14, minute=0)))
             #############################
