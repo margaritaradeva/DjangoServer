@@ -26,6 +26,7 @@ from django.contrib.auth.validators import UnicodeUsernameValidator
 from .managers import CustomUserManager
 from datetime import timedelta
 from django.utils import timezone
+from django.db.models import Manager 
 
 def upload_thumbnail(instance, filename):
     """
@@ -149,11 +150,12 @@ class UserActivity(models.Model):
      activity_time = models.DateTimeField(null=True, blank=True)
 
      activity_type = models.CharField(max_length=10, choices=(('morning', 'Morning'), ('evening', 'Evening'), ('both', 'Both')))
+     objects = Manager()
      class Meta:
           indexes = [
                models.Index(fields=['user','activity_date']),
           ]
           unique_together = ('user', 'activity_date','activity_time', 'activity_type')  # Ensuring uniqueness
-    
+          
      def __str__(self):
           return f"{self.user.email} - {self.activity_date} - {self.activity_time} - {self.activity_type}"
