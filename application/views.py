@@ -6,6 +6,7 @@ from rest_framework import exceptions
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenRefreshView
+from collections import defaultdict
 from rest_framework import status, permissions
 from django.http import HttpResponse
 from .serializers import CustomUserSerializer, UserActivitySerializer
@@ -399,6 +400,19 @@ class UserActivities(APIView):
     def post(self,request):
         email = request.data["email"]
         user = get_user_by_email(email=email)
-        activities = UserActivity.objects.filter(user=user).values('activity_date', 'activity_type').distinct() 
-        activity_pairs = [{'activity_date': activity['activity_date'], 'activity_type': activity['activity_type']} for activity in activities]
+        activities = UserActivity.objects.filter(user=user).values('activity_date', 'activity_type')
+
+        grouped = defaultdict(set)
+        for activity in activities:
+            grouped[activity['activity_date']].add(activity['activity_type'])
+        activity_pairs = []
+
+        for date, type in grouped.items():
+            if 'morning' in type and 'evening' in type:
+                activity_pairs.append({'activity_date': date, 'activity_type': 'both'})
+            else:
+                activity_type = 'morning' if 'morning' in type else 'evening'
+                activity_pairs.append({'activity_date': date, 'activity_type': activity_type})
+
+
         return Response(activity_pairs, status=status.HTTP_200_OK)
