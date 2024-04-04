@@ -135,25 +135,9 @@ class UpdateStreak(APIView):
     def post(self, request):
          email = request.data["email"]
          user = get_user_by_email(email=email)
-
-
-
-         updated_streak = True
-
-
-          ######## delete later
-         yesterday = datetime.datetime(2024, 4, 6)
-         yesterday_date = yesterday.date()
-         user.last_active_date = yesterday_date
-        ###################################
+         updated_streak = False
          try:
-            #today = datetime.date.today()
-
-            #########delete later
-            custom_date = datetime.datetime(2024, 4, 6)
-            today = custom_date.date()
-            custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=14, minute=0)))
-            #############################
+            today = datetime.date.today()
             
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date is not None and user.current_streak !=0:
@@ -171,12 +155,8 @@ class UpdateStreak(APIView):
                 updated_streak=True
 
             if updated_streak == True:
-                #time_now = timezone.now()
-
-                ########## delete later
-                time_now = custom_time_for_testing
-
-                user.is_pin_set=False
+                time_now = timezone.now()
+                
                 
                 if time_now.hour<12:
                     type='morning'
@@ -212,6 +192,7 @@ class UpdateActivity(APIView):
     def post(self, request):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
+
         if user is None: 
             return Response({'detail':'User not found'}, status=status.HTTP_404_NOT_FOUND)
         time_now = timezone.now()
