@@ -21,7 +21,6 @@ urlpatterns = [
     path('updateUserXP/', views.UpdateLevelXP.as_view(), name="update_level_xp"),
     path('updateCurrentLevelMaxXP/', views.UpdateLevelMaxXP.as_view(), name="update_level_max_xp"),
     path('miniShop/', views.MiniShopPhoto().as_view(), name="mini_shop"),
-    path('statistics/', views.Statistics.as_view(), name="statistics"),
     path('updateStreak/', views.UpdateStreak.as_view(), name="update_streak"),
     path('updateActivity/', views.UpdateActivity.as_view(), name="update_activity"),
     path('activities/',views.UserActivities.as_view(), name="user_activities"),
