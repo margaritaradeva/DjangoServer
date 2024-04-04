@@ -29,8 +29,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
     max_streak_evening = serializers.IntegerField(read_only=True)
     total_brushes_morning = serializers.IntegerField(read_only=True)
     total_brushes_evening = serializers.IntegerField(read_only=True)
-    percentage_morning = serializers.IntegerField(read_only=True)
-    percentage_evening = serializers.IntegerField(read_only=True)
+    percentage_morning = serializers.FloatField(read_only=True)
+    percentage_evening = serializers.FloatField(read_only=True)
 
 
     class Meta:
