@@ -32,7 +32,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model=CustomUser
         fields = ('id','first_name','last_name','email','password','total_brush_time','current_level','current_level_xp','current_level_max_xp','image_id',
                   'current_streak','max_streak','total_brushes','parent_pin','is_pin_set', 'last_active_date',
-                  'last_active_morning, last_active_evening','streak_morning', 'streak_evening','max_streak_morning',
+                  'last_active_morning', 'last_active_evening','streak_morning', 'streak_evening','max_streak_morning',
                   'max_streak_evening')
         extra_kwargs = {'password': {'write_only':True}}
    
