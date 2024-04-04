@@ -136,6 +136,9 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          updated_streak = False
+         yesterday = datetime.datetime(2024, 4, 3)
+         yesterday_date = yesterday.date()
+         user.last_active_date = yesterday_date
          try:
             today = datetime.date.today()
             custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=11, minute=0)))
