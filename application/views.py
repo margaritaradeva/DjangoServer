@@ -136,12 +136,9 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          updated_streak = False
-         yesterday = datetime.datetime(2024, 4, 3)
-         yesterday_date = yesterday.date()
-         user.last_active_date = yesterday_date
          try:
             today = datetime.date.today()
-            custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=11, minute=0)))
+            
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date is not None and user.current_streak !=0:
                  if today - user.last_active_date == timedelta(days=1):
@@ -158,8 +155,7 @@ class UpdateStreak(APIView):
                 updated_streak=True
 
             if updated_streak == True:
-                # time_now = timezone.now()
-                time_now = custom_time_for_testing
+                time_now = timezone.now()
                 user.is_pin_set=False
                 
                 if time_now.hour<12:
