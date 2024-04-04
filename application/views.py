@@ -147,7 +147,7 @@ class UpdateStreak(APIView):
             #########delete later
             custom_date = datetime.datetime(2024, 4, 1)
             today = custom_date.date()
-            custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=11, minute=0)))
+            custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=14, minute=0)))
             #############################
             
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
