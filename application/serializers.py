@@ -1,5 +1,5 @@
 from django.forms import ValidationError
-from application.models import CustomUser
+from application.models import CustomUser, UserActivity
 from rest_framework import serializers
 from .models import validate_password
 
@@ -74,5 +74,8 @@ class CustomUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("PIN must be numeric")
         return value
    
-    
+class UserActivitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserActivity
+        firlds = '__all__'
   

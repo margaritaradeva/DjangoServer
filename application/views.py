@@ -8,7 +8,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework import status, permissions
 from django.http import HttpResponse
-from .serializers import CustomUserSerializer
+from .serializers import CustomUserSerializer, UserActivitySerializer
 from django.db import IntegrityError
 from datetime import timedelta
 import datetime
@@ -370,3 +370,15 @@ class CheckIfPinIsSet(APIView):
     def get(self,request):
         user=request.user
         return Response({"is_pin_set": user.is_pin_set}, status=status.HTTP_200_OK)
+    
+
+class UserActivity(APIView):
+
+    def post(self,request):
+        email = request.data["email"]
+        user = get_user_by_email(email=email)
+
+        activities = UserActivity.objects.filter(user=user)
+        serializer = UserActivitySerializer(activities, many=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
