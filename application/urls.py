@@ -23,4 +23,5 @@ urlpatterns = [
     path('miniShop/', views.MiniShopPhoto().as_view(), name="mini_shop"),
     path('statistics/', views.Statistics.as_view(), name="statistics"),
     path('updateStreak/', views.UpdateStreak.as_view(), name="update_streak"),
+    path('updateActivity/', views.UpdateActivity.as_view(), name="update_activity"),
 ]

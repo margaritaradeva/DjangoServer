@@ -164,6 +164,48 @@ class UpdateStreak(APIView):
             return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST) 
 
 
+class UpdateActivity(APIView):
+
+    def post(sewlf, request):
+        email = request.data.get("email")
+        user = get_user_by_email(email=email)
+
+        if user is None: 
+            return Response({'detail':'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        time_now = timezone.now()
+        try:
+            if time_now.hour < 12:
+                # Morning activity
+                if user.last_active_morning is not None and user.streak_morning !=0:
+                    if time_now.date() - user.last_active_morning.date() == timedelta(days=1):
+                        user.streak_morning += 1
+                    elif time_now.date() - user.last_active_morning.date() > timedelta(days=1):
+                        user.streak_morning = 1
+                else: 
+                    user.streak_morning = 1
+                user.last_active_morning = time_now
+                if user.streak_morning > user.max_streak_morning:
+                    user.max_streak_morning = user.streak_morning
+
+            else:
+                if user.last_active_evening is not None and user.streak_evening !=0:
+                    if time_now.date() - user.last_active_evening.date() == timedelta(days=1):
+                        user.streak_evening += 1
+                    elif time_now.date() - user.last_active_evening.date() > timedelta(days=1):
+                        user.streak_evening = 1
+                else: user.streak_evening = 1
+                user.last_active_evening = time_now
+                if user.streak_evening > user.max_streak_evening:
+                    user.max_streak_evening = user.streak_evening
+
+            user.save()
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'detail':str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class UpdateLevel(APIView):
