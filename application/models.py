@@ -126,6 +126,8 @@ class CustomUser(AbstractUser):
     objects = CustomUserManager()
     validators = [UnicodeUsernameValidator, validate_password]
 
+
+
     
 
 
@@ -139,3 +141,17 @@ class CustomUser(AbstractUser):
         """
         return f"Name: {self.first_name} {self.last_name} \n email: {self.email}"
     
+
+class UserActivity(models.Model):
+     
+     user=models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='activities')
+     activity_date = models.DateField()
+     activity_type = models.CharField(max_length=10, choices=(('morning', 'Morning'), ('evening', 'Evening'), ('both', 'Both')))
+     class Meta:
+          indexes = [
+               models.Index(fields=['user','activity_date']),
+          ]
+          unique_together = ('user', 'activity_date', 'activity_type')  # Ensuring uniqueness
+    
+     def __str__(self):
+          return f"{self.user.email} - {self.activity_date} - {self.activity_type}"
