@@ -160,7 +160,7 @@ class UpdateStreak(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
          except Exception as e: 
             print(e) 
-            return Response(status=status.HTTP_400_BAD_REQUEST) 
+            return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST) 
 
 
 
