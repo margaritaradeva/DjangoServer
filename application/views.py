@@ -135,7 +135,7 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          try:
-            today = datetime.date().today()
+            today = datetime.date.today()
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date is not None and user.current_streak !=0:
                  if today - user.last_active_date == timedelta(days=1):
