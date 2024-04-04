@@ -134,6 +134,7 @@ class UpdateStreak(APIView):
     def post(self, request):
          email = request.data["email"]
          user = get_user_by_email(email=email)
+         updated_streak = False
          try:
             today = datetime.date.today()
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
@@ -141,12 +142,32 @@ class UpdateStreak(APIView):
                  if today - user.last_active_date == timedelta(days=1):
                      # 1 day so we up the streak
                      user.current_streak += 1
+                     updated_streak=True
                     
                  elif today - user.last_active_date > timedelta(days=1):
                      # longer than 1 day so reset the streak
                      user.current_streak  = 1
+                     updated_streak=True
             else:
                 user.current_streak = 1
+                updated_streak=True
+
+            if updated_streak == True:
+                time_now = timezone.now()
+                
+                if time_now.hour<12:
+                    type='morning'
+                else:
+                    type='evening'
+
+                
+                new_activity = UserActivity(
+                    user=user,
+                    activity_date=today,
+                    activity_time= time_now,
+                    activity_type=type
+                )
+                new_activity.save()
             
 
             if user.current_streak > user.max_streak:
