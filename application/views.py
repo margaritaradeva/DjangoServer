@@ -136,8 +136,19 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          updated_streak = False
+          ######## delete later
+         yesterday = datetime.datetime(2024, 4, 1)
+         yesterday_date = yesterday.date()
+         user.last_active_date = yesterday_date
+        ###################################
          try:
-            today = datetime.date.today()
+            #today = datetime.date.today()
+
+            #########delete later
+            custom_date = datetime.datetime(2024, 4, 1)
+            today = custom_date.date()
+            custom_time_for_testing = timezone.make_aware(datetime.datetime.combine(today, datetime.time(hour=11, minute=0)))
+            #############################
             
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date is not None and user.current_streak !=0:
@@ -155,7 +166,11 @@ class UpdateStreak(APIView):
                 updated_streak=True
 
             if updated_streak == True:
-                time_now = timezone.now()
+                #time_now = timezone.now()
+
+                ########## delete later
+                time_now = custom_time_for_testing
+
                 user.is_pin_set=False
                 
                 if time_now.hour<12:
@@ -192,7 +207,6 @@ class UpdateActivity(APIView):
     def post(self, request):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
-
         if user is None: 
             return Response({'detail':'User not found'}, status=status.HTTP_404_NOT_FOUND)
         time_now = timezone.now()
@@ -354,23 +368,7 @@ class SetParentPin(APIView):
         user.save()
         return Response({"message":"Parent PIN was set successfully."}, status=status.HTTP_200_OK)
     
-class Statistics(APIView):
-    def post(self, request):
-        update_current_streak_by = request.data.get("update_current_streak_by", None)
-        update_max_streak_by = request.data.get("update_max_streak_by", None)
-        update_total_brushes_by = request.data.get("update_total_brushes_by", None)
-        email = request.data["email"]
-        user = get_user_by_email(email=email)
-       
-        try:
-            user.current_streak += int(update_current_streak_by)
-            user.max_streak += int(update_max_streak_by)
-            user.total_brushes += int(update_total_brushes_by)
-            user.save()
-            serializer = CustomUserSerializer(user)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        except:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 
 class CheckParentPIN(APIView):
