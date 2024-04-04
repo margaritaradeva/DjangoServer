@@ -77,5 +77,5 @@ class CustomUserSerializer(serializers.ModelSerializer):
 class UserActivitySerializer(serializers.ModelSerializer):
     class Meta:
         model = UserActivity
-        firlds = '__all__'
+        fields = '__all__'
   
