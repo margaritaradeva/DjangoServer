@@ -120,7 +120,10 @@ class update_total_brush_time(APIView):
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
             try:
                 user.total_brush_time += int(added_time)
-                user.last_active_date = datetime.date.today()
+                #user.last_active_date = datetime.date.today()
+                yesterday = datetime.datetime(2024, 4, 3)
+                yesterday_date = yesterday.date()
+                user.last_active_date = yesterday_date
                 user.save()
                 serializer = CustomUserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
