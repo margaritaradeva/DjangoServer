@@ -399,7 +399,6 @@ class UserActivities(APIView):
     def post(self,request):
         email = request.data["email"]
         user = get_user_by_email(email=email)
-        activity_dates = UserActivity.objects.filter(user=user).values_list('activity_date',flat=True)
-        activity_dates_list = list(activity_dates)
-
-        return Response(activity_dates_list, status=status.HTTP_200_OK)
+        activities = UserActivity.objects.filter(user=user).values('activity_date', 'activity_type').distinct() 
+        activity_pairs = [{'activity_date': activity['activity_date'], 'activity_type': activity['activity_type']} for activity in activities]
+        return Response(activity_pairs, status=status.HTTP_200_OK)
