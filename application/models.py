@@ -106,6 +106,15 @@ class CustomUser(AbstractUser):
     parent_pin = models.CharField(max_length=6, null=True, blank=True)
     is_pin_set = models.BooleanField(default=False)
     last_active_date = models.DateField(null=True, blank=True)
+    last_active_morning = models.DateTimeField(null=True, blank=True)
+    last_active_evening = models.DateTimeField(null=True, blank=True)
+
+    streak_morning = models.IntegerField(default=0)
+    max_streak_morning = models.IntegerField(default=0)
+
+    streak_evening = models.IntegerField(default=0)
+    max_streak_evening = models.IntegerField(default=0)
+    
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately

@@ -21,6 +21,12 @@ class CustomUserSerializer(serializers.ModelSerializer):
     max_streak = serializers.IntegerField()
     total_brushes = serializers.IntegerField()
     last_active_date = serializers.DateField(read_only=True)
+    last_active_morning = serializers.DateTimeField(read_only=True)
+    last_active_evening = serializers.DateTimeField(read_only=True)
+    streak_morning = serializers.IntegerField(read_only=True)
+    streak_evening = serializers.IntegerField(read_only=True)
+    max_streak_morning = serializers.IntegerField(read_only=True)
+    max_streak_evening = serializers.IntegerField(read_only=True)
 
     class Meta:
         model=CustomUser
