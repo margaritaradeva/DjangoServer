@@ -11,6 +11,7 @@ from django.http import HttpResponse
 from .serializers import CustomUserSerializer
 from django.db import IntegrityError
 from datetime import timedelta
+import datetime
 from rest_framework.exceptions import ValidationError as DRFValidationError
 #from rest_framework_simplejwt.token_blacklist import OutstandingToken, BlacklistedToken
 from .managers import CustomUserManager
@@ -119,7 +120,7 @@ class update_total_brush_time(APIView):
             serializer = CustomUserSerializer(user, data={'total_brush_time':user.total_brush_time + int(added_time)}, partial=True)
             try:
                 user.total_brush_time += int(added_time)
-                user.last_active_date = timezone.now().date()
+                user.last_active_date = datetime.date.today()
                 user.save()
                 serializer = CustomUserSerializer(user)
                 return Response(serializer.data, status=status.HTTP_200_OK)
@@ -131,17 +132,18 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          try:
-            today = timezone.now().date()
+            today = datetime.date().today()
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
             if user.last_active_date is not None and user.current_streak !=0:
                  if today - user.last_active_date == timedelta(days=1):
+                     # 1 day so we up the streak
                      user.current_streak += 1
                     
                  elif today - user.last_active_date > timedelta(days=1):
+                     # longer than 1 day so reset the streak
                      user.current_streak  = 1
-                     user.is_pin_set=False
             else:
-                user.current_streak += 1
+                user.current_streak = 1
             
 
             if user.current_streak > user.max_streak:
