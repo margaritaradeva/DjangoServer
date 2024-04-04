@@ -121,7 +121,7 @@ class update_total_brush_time(APIView):
             try:
                 user.total_brush_time += int(added_time)
                 #user.last_active_date = datetime.date.today()
-                yesterday = datetime.datetime(2024, 4, 3)
+                yesterday = datetime.datetime(2024, 4, 2)
                 yesterday_date = yesterday.date()
                 user.last_active_date = yesterday_date
                 user.save()
