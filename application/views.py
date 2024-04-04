@@ -135,6 +135,9 @@ class UpdateStreak(APIView):
          email = request.data["email"]
          user = get_user_by_email(email=email)
          updated_streak = False
+         yesterday = datetime.datetime(2024, 4, 3)
+         yesterday_date = yesterday.date()
+         user.last_active_date = yesterday_date
          try:
             today = datetime.date.today()
             # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
@@ -187,7 +190,7 @@ class UpdateStreak(APIView):
 
 class UpdateActivity(APIView):
 
-    def post(sewlf, request):
+    def post(self, request):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
 
