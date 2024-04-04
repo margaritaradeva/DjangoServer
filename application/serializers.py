@@ -31,6 +31,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
     total_brushes_evening = serializers.IntegerField(read_only=True)
     percentage_morning = serializers.FloatField(read_only=True)
     percentage_evening = serializers.FloatField(read_only=True)
+    total_brushes_days = serializers.IntegerField(read_only=True)
 
 
     class Meta:
@@ -38,7 +39,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         fields = ('id','first_name','last_name','email','password','total_brush_time','current_level','current_level_xp','current_level_max_xp','image_id',
                   'current_streak','max_streak','total_brushes','parent_pin','is_pin_set', 'last_active_date',
                   'last_active_morning', 'last_active_evening','streak_morning', 'streak_evening','max_streak_morning',
-                  'max_streak_evening', 'total_brushes_morning', 'total_brushes_evening', 'percentage_morning', 'percentage_evening')
+                  'max_streak_evening', 'total_brushes_morning', 'total_brushes_evening', 'percentage_morning', 'percentage_evening', 'total_brushes_days')
         extra_kwargs = {'password': {'write_only':True}}
    
     def create(self, data):

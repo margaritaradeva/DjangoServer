@@ -118,7 +118,7 @@ class CustomUser(AbstractUser):
 
     total_brushes_morning = models.IntegerField(default=0)
     total_brushes_evening = models.IntegerField(default=0)
-
+    total_brushes_days = models.IntegerField(default=0)
     percentage_morning = models.FloatField(default=0.0)
     percentage_evening = models.FloatField(default=0.0)
    # is_verified = models.BooleanField(default=False)

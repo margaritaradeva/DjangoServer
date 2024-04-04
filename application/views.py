@@ -191,9 +191,7 @@ class ChangeUserTesting(APIView):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
 
-        user.percentage_morning = 0.5    
-        
-        user.percentage_evening = 0.75
+        user.total_brushes_days=4
         user.save()
 
         return Response(status=status.HTTP_200_OK)
