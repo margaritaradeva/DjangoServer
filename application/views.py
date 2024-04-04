@@ -198,6 +198,7 @@ class ChangeUserTesting(APIView):
         user.total_brushes_evening=3
         user.percentage_morning = user.total_brushes_morning/user.total_brushes
         user.percentage_evening = user.total_brushes_evening/user.total_brushes
+        user.save()
 
         return Response(status=status.HTTP_200_OK)
 
