@@ -121,7 +121,6 @@ class update_total_brush_time(APIView):
             try:
                 user.total_brush_time += int(added_time)
                 user.last_active_date = datetime.date.today()
-                user.total_brushes += 1
                 # yesterday = datetime.datetime(2024, 4, 3)
                 # yesterday_date = yesterday.date()
                 # user.last_active_date = yesterday_date
@@ -184,6 +183,9 @@ class UpdateActivity(APIView):
                 else: 
                     user.streak_morning = 1
                 user.last_active_morning = time_now
+                user.total_brushes_morning += 1
+                user.total_brushes += 1
+                user.percentage_morning = user.total_brushes_morning/user.total_brushes
                 if user.streak_morning > user.max_streak_morning:
                     user.max_streak_morning = user.streak_morning
 
@@ -195,6 +197,9 @@ class UpdateActivity(APIView):
                         user.streak_evening = 1
                 else: user.streak_evening = 1
                 user.last_active_evening = time_now
+                user.total_brushes_evening += 1
+                user.total_brushes += 1
+                user.percentage_evening = user.total_brushes_evening/user.total_brushes
                 if user.streak_evening > user.max_streak_evening:
                     user.max_streak_evening = user.streak_evening
 
