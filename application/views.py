@@ -154,23 +154,6 @@ class UpdateStreak(APIView):
                 user.current_streak = 1
                 updated_streak=True
 
-            if updated_streak == True:
-                time_now = timezone.now()
-                
-                
-                if time_now.hour<12:
-                    type='morning'
-                else:
-                    type='evening'
-
-                
-                new_activity = UserActivity(
-                    user=user,
-                    activity_date=today,
-                    activity_time= time_now,
-                    activity_type=type
-                )
-                new_activity.save()
             
 
             if user.current_streak > user.max_streak:
@@ -201,6 +184,7 @@ class UpdateActivity(APIView):
     def post(self, request):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
+        updated_streak = False
 
         if user is None: 
             return Response({'detail':'User not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -211,14 +195,18 @@ class UpdateActivity(APIView):
                 if user.last_active_morning is not None and user.streak_morning !=0:
                     if time_now.date() - user.last_active_morning.date() == timedelta(days=1):
                         user.streak_morning += 1
+                        updated_streak = True
                     elif time_now.date() - user.last_active_morning.date() > timedelta(days=1):
                         user.streak_morning = 1
+                        updated_streak = True
                 else: 
                     user.streak_morning = 1
+                    updated_streak = True
                 user.last_active_morning = time_now
                 user.total_brushes_morning += 1
                 user.total_brushes += 1
-                user.percentage_morning = user.total_brushes_morning/user.total_brushes
+                user.percentage_morning = user.total_brushes_morning/user.total_brushes_days
+
                 if user.streak_morning > user.max_streak_morning:
                     user.max_streak_morning = user.streak_morning
 
@@ -226,16 +214,36 @@ class UpdateActivity(APIView):
                 if user.last_active_evening is not None and user.streak_evening !=0:
                     if time_now.date() - user.last_active_evening.date() == timedelta(days=1):
                         user.streak_evening += 1
+                        updated_streak = True
                     elif time_now.date() - user.last_active_evening.date() > timedelta(days=1):
                         user.streak_evening = 1
+                        updated_streak = True
                 else: user.streak_evening = 1
+                updated_streak = True
                 user.last_active_evening = time_now
                 user.total_brushes_evening += 1
                 user.total_brushes += 1
-                user.percentage_evening = user.total_brushes_evening/user.total_brushes
+                user.percentage_evening = user.total_brushes_evening/user.total_brushes_days
                 if user.streak_evening > user.max_streak_evening:
                     user.max_streak_evening = user.streak_evening
 
+            if updated_streak == True:
+                time_now = timezone.now()
+                
+                
+                if time_now.hour<12:
+                    type='morning'
+                else:
+                    type='evening'
+
+                
+                new_activity = UserActivity(
+                    user=user,
+                    activity_date=today,
+                    activity_time= time_now,
+                    activity_type=type
+                )
+                new_activity.save()
             user.save()
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
