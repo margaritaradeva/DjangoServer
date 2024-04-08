@@ -135,7 +135,7 @@ class UpdateStreak(APIView):
     def post(self, request):
          email = request.data["email"]
          user = get_user_by_email(email=email)
-         updated_streak = False
+        
          try:
             today = datetime.date.today()
             
@@ -144,15 +144,15 @@ class UpdateStreak(APIView):
                  if today - user.last_active_date == timedelta(days=1):
                      # 1 day so we up the streak
                      user.current_streak += 1
-                     updated_streak=True
+                
                     
                  elif today - user.last_active_date > timedelta(days=1):
                      # longer than 1 day so reset the streak
                      user.current_streak  = 1
-                     updated_streak=True
+               
             else:
                 user.current_streak = 1
-                updated_streak=True
+          
 
             
 
@@ -185,7 +185,7 @@ class UpdateActivity(APIView):
         email = request.data.get("email")
         user = get_user_by_email(email=email)
         updated_streak = False
-
+        today = datetime.date.today()
         if user is None: 
             return Response({'detail':'User not found'}, status=status.HTTP_404_NOT_FOUND)
         time_now = timezone.now()
