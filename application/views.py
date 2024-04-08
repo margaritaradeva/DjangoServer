@@ -144,15 +144,15 @@ class UpdateStreak(APIView):
                  if today - user.last_active_date == timedelta(days=1):
                      # 1 day so we up the streak
                      user.current_streak += 1
-                
+                     user.total_brushes_days +=1
                     
                  elif today - user.last_active_date > timedelta(days=1):
                      # longer than 1 day so reset the streak
                      user.current_streak  = 1
-               
+                     user.total_brushes_days +=1
             else:
                 user.current_streak = 1
-          
+                user.total_brushes_days +=1
 
             
 
