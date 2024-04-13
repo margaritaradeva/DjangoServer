@@ -177,6 +177,8 @@ class SetCharterName(APIView):
             new_name = request.data.get("new_name")
             user = get_user_by_email(email=email)
             user.character_name = new_name
+            if user.is_char_name_set is False:
+                user.is_char_name_set = True
             user.save()
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
