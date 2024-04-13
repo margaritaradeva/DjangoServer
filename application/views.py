@@ -177,7 +177,7 @@ class SetCharterName(APIView):
             new_name = request.data.get("new_name")
             user = get_user_by_email(email=email)
             user.character_name = new_name
-
+            user.save()
             return Response(status=status.HTTP_200_OK)
         except Exception as e:
             return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST)
