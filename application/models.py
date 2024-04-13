@@ -121,6 +121,7 @@ class CustomUser(AbstractUser):
     total_brushes_days = models.IntegerField(default=0)
     percentage_morning = models.FloatField(default=0.0)
     percentage_evening = models.FloatField(default=0.0)
+    character_name=models.CharField(default='Brushy')
    # is_verified = models.BooleanField(default=False)
     # Link the custom user manager to this user model. This manager will understand that email
     # is the unique identifier and will handle user creationappropriately

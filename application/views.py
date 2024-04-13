@@ -168,6 +168,19 @@ class UpdateStreak(APIView):
          except Exception as e: 
             print(e) 
             return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST) 
+         
+
+class SetCharterName(APIView):
+    def post(self, request):
+        try:
+            email= request.data.get("email")
+            new_name = request.data.get("new_name")
+            user = get_user_by_email(email=email)
+            user.character_name = new_name
+
+            return Response(status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST)
 
 class ChangeUserTesting(APIView):
     def post(self,request):
