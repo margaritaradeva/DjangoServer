@@ -1,39 +1,68 @@
+from django.http import HttpResponse
+from django.db import IntegrityError
+from rest_framework import status, permissions
+from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.exceptions import ValidationError
-from rest_framework import exceptions
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework import exceptions
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from collections import defaultdict
-from rest_framework import status, permissions
-from django.http import HttpResponse
-from .serializers import CustomUserSerializer, UserActivitySerializer
-from django.db import IntegrityError
-from datetime import timedelta
 import datetime
-from rest_framework.exceptions import ValidationError as DRFValidationError
-#from rest_framework_simplejwt.token_blacklist import OutstandingToken, BlacklistedToken
-from .managers import CustomUserManager
-from .models import CustomUser, get_user_by_email, UserActivity
 from django.utils import timezone
 import logging
 
+from .models import CustomUser, get_user_by_email, UserActivity
+from .serializers import CustomUserSerializer, UserActivitySerializer
+
+# Setup logging
 logger = logging.getLogger('application') 
 logger.debug('This is a debug message')
 
 def home_view(request):
+    """
+    Simple home view, created to test urls.
+    """
     return HttpResponse("Welcome to the home page!")
 
 
 class SignUp(APIView):
+    """
+    API view for user registration. Handles user creation with JWT token generation.
+    This endpoint expects data for creating a new user account-first and last name, email, password.
+    It validates the data, creates a user, and generates JWT tokens for authentication
+
+    Methods:
+        post: Receives user data, validates, creates the user and returns JWT tokens.
+    I
+    """
     def post(self, request):
+        """
+        Handle POST requests  to register a new user.
+
+        Args:
+            request (HttpsRequest): The request object cointaining the user credentials data
+
+        Returns:
+            Response: A django rest response object with the newly created user data and tokens or error message
+
+        This method:
+            -Takes user data from the request
+            -Validates the data using the CustomUserSerializer
+            -If the validation fails it returns an http 400 bad request
+            -If validation passes it saves the user in the database
+            -creates a refresh and access token using django rest
+            -returns a response with the user details and tokens if successful
+            -handles already existing users - http 409 conflict
+            -additionally it checks for any other validation errors (in the serializer)
+        
+        """
         serializer = CustomUserSerializer(data=request.data)
         try:
             if serializer.is_valid(raise_exception=True):
                 user = serializer.save()
-
                 refresh_token = RefreshToken.for_user(user)
                 access_token = refresh_token.access_token
 
@@ -84,9 +113,8 @@ class SignIn(APIView):
         # JWT token
 class Reuthenticate(APIView):
     def post(self,request):
-        email = request.data['email']
-        password = request.data['password']
-        user = get_user_by_email(email=email)
+        user = request.user
+        password = user.password
 
         if user is None:
             raise exceptions.AuthenticationFailed("Invalid credentials")
@@ -98,8 +126,8 @@ class Reuthenticate(APIView):
 
 class isSignedIn(APIView):
         # can only be used if the user is authenticated
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         email = request.data.get("email")
