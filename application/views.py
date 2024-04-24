@@ -9,8 +9,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework import exceptions
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.exceptions import Throttled, ValidationError, ServiceUnavailable, NotFound
+from django.db.utils import OperationalError
 from collections import defaultdict
 import datetime
+from datetime import timedelta
 from django.utils import timezone
 import logging
 
@@ -84,58 +87,122 @@ class SignUp(APIView):
             return Response({'detail': 'A user with that email already exists.'}, status=status.HTTP_409_CONFLICT)
 
 class SignIn(APIView):
+    """
+    API view for authentication. This view handles the login process, verifies user credentials,
+    and provides JWT tokens.
+    """
     def post(self, request):
-        # not gonna return a dataclass object bc i want to
-        # authenticate a user and store that session
-        # inside a cookie
-        email = request.data["email"]
-        password = request.data["password"]
+        """
+        Authenticate a user based on email and password and return jwt access and refresh tokens
 
-        user = get_user_by_email(email=email)
-        # INvalid credentials for both cases bc we dont wanna tell an attacker which one is wrong
-        if user is None:
-            raise exceptions.AuthenticationFailed("Invalid credentials")
-        if not user.check_password(raw_password=password):
-            raise exceptions.AuthenticationFailed("Invalid credentials")
-        # Generate access and refresh tokens from JWT
+        Args:
+            request (HttpRequest): The request object contaiing the user's credentials
 
-        refresh_token = RefreshToken.for_user(user)
-        access = refresh_token.access_token
-        response = Response()
-        serializer = CustomUserSerializer(user)
-        response.data = {
-            'refresh': str(refresh_token),
-            'access': str(access),
-            'user': serializer.data
-        }
-        response.status_code = status.HTTP_200_OK
-        return response
-        # JWT token
+        Returns:
+                Response: a django rest response object with jwt tokens and user fata if authentication is successful, otherwise raises Authentication failed exception
+        """
+        try:
+            email = request.data["email"]
+            password = request.data["password"]
+
+            user = get_user_by_email(email=email)
+            # Invalid credentials for both cases bc we dont wanna tell an attacker which one is wrong
+            if user is None:
+                raise exceptions.AuthenticationFailed("Invalid credentials")
+            if not user.check_password(raw_password=password):
+                raise exceptions.AuthenticationFailed("Invalid credentials")
+            # Generate access and refresh tokens from JWT
+
+            refresh_token = RefreshToken.for_user(user)
+            access = refresh_token.access_token
+            response = Response()
+            serializer = CustomUserSerializer(user)
+            response.data = {
+                'refresh': str(refresh_token),
+                'access': str(access),
+                'user': serializer.data
+            }
+            response.status_code = status.HTTP_200_OK
+            return response
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
 class Reuthenticate(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    """
+    API view for reauthenticating users, used in the frontend application to confirm user credentials when requesting to reset parent PIN
+    """
     def post(self,request):
-        
-        user = request.user
-        password = user.password
+        """
+        Reauthenticate a user to verify their credentials while still logged in
 
-        if user is None:
-            raise exceptions.AuthenticationFailed("Invalid credentials")
-        if not user.check_password(raw_password=password):
-            raise exceptions.AuthenticationFailed("Invalid credentials")
+        Args:
+            request (HttpRequest): The request object contaiing the user's credentials
+
+        Returns:
+                Response: a django rest response object with http 200 ok status if user reauthentication is successful and a raised exception otherwise
         
-        return Response(status=status.HTTP_200_OK)
+        """
+        try:
+            email = request.data['email']
+            password = request.data['password']
+            user = get_user_by_email(email=email)
+
+            if user is None or not user.check_password(raw_password=password):
+                raise exceptions.AuthenticationFailed("Invalid credentials")
+            if not user.check_password(raw_password=password):
+                raise exceptions.AuthenticationFailed("Invalid credentials")
+            
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 class isSignedIn(APIView):
-        # can only be used if the user is authenticated
+    """
+    API view to check if the current user session is valid and to return user's details. This view
+    ensures that the user is authenticated via jwt tokens
+    
+    """
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        user = request.user
-        serializer = CustomUserSerializer(user)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        """
+        
+        Responds with the serizlized data of the authenticated user. The user is taken directly from request.user
+        which is guaranteed to be authenticated due to  the isAuthenticated permission
+
+        Args:
+            request (HttpResponse): the request object automatically populated with the user by the authentication classes
+
+        Returns:
+            Response: django rest response object containing the user's info and a raiased exception otherwise
+        """
+        try:
+            user = request.user
+            serializer = CustomUserSerializer(user)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
+
+
+
+
+
+
+
+
+
+###############################
 
 class update_total_brush_time(APIView):
     authentication_classes = [JWTAuthentication]
@@ -144,7 +211,7 @@ class update_total_brush_time(APIView):
     def post(self, request):
         added_time =request.data.get("added_time", None)
         email = request.data["email"]
-        user = request.user
+        user = get_user_by_email(email=email)
        
 
         if added_time is not None:
@@ -238,10 +305,10 @@ class UpdateActivity(APIView):
             if time_now.hour < 12:
                 # Morning activity
                 if user.last_active_morning is not None and user.streak_morning !=0:
-                    if time_now.date() - user.last_active_morning.date() == timedelta(days=1):
+                    if time_now.date() - user.last_active_morning.date() == datetime.timedelta(days=1):
                         user.streak_morning += 1
                         updated_streak = True
-                    elif time_now.date() - user.last_active_morning.date() > timedelta(days=1):
+                    elif time_now.date() - user.last_active_morning.date() > datetime.timedelta(days=1):
                         user.streak_morning = 1
                         updated_streak = True
                 else: 
