@@ -112,7 +112,10 @@ class SignIn(APIView):
         return response
         # JWT token
 class Reuthenticate(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     def post(self,request):
+        
         user = request.user
         password = user.password
 
@@ -130,19 +133,18 @@ class isSignedIn(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        email = request.data.get("email")
-        user = get_user_by_email(email=email)
+        user = request.user
         serializer = CustomUserSerializer(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class update_total_brush_time(APIView):
-    # authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
         added_time =request.data.get("added_time", None)
         email = request.data["email"]
-        user = get_user_by_email(email=email)
+        user = request.user
        
 
         if added_time is not None:
