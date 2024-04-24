@@ -9,7 +9,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenRefreshView
 from rest_framework import exceptions
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.exceptions import Throttled, ValidationError, ServiceUnavailable, NotFound
+from rest_framework.exceptions import Throttled, ValidationError, NotFound
 from django.db.utils import OperationalError
 from collections import defaultdict
 import datetime
