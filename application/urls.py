@@ -33,6 +33,5 @@ urlpatterns = [
     path("updateStreak/", views.UpdateStreak.as_view(), name="update_streak"),
     path("updateActivity/", views.UpdateActivity.as_view(), name="update_activity"),
     path("activities/", views.UserActivities.as_view(), name="user_activities"),
-    path("modify/", views.ChangeUserTesting.as_view(), name="test"),
     path("updateCharacterName/", views.SetCharterName.as_view(), name="char_name"),
 ]
