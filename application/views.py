@@ -283,32 +283,37 @@ class UpdateStreak(APIView):
         """
         user = request.user
         try:
-            today = timezone.now().date()  # Use timezone-aware date
-
-            if user.last_active_date:
-                difference = (today - user.last_active_date).days
-                if difference == 1:
-                    # Exactly one day difference increments the streak
-                    user.current_streak += 1
-                    user.total_brushes_days += 1
-                elif difference > 1:
-                    # More than one day resets the streak
-                    user.current_streak = 1
-                    user.total_brushes_days += 1
+            today = datetime.date.today()
+            
+            # logger.debug(f"Updating streak for user: {user.email}, Last active date: {user.last_active_date}, Today: {today}")
+            if user.last_active_date is not None and user.current_streak !=0:
+                 if today - user.last_active_date == timedelta(days=1):
+                     # 1 day so we up the streak
+                     user.current_streak += 1
+                     user.total_brushes_days +=1
+                    
+                 elif today - user.last_active_date > timedelta(days=1):
+                     # longer than 1 day so reset the streak
+                     user.current_streak  = 1
+                     user.total_brushes_days +=1
             else:
-                # If no last active date, start new streak
                 user.current_streak = 1
-                user.total_brushes_days += 1
+                user.total_brushes_days +=1
+
+            
 
             if user.current_streak > user.max_streak:
                 user.max_streak = user.current_streak
-
             user.last_active_date = today
+            # user.save()
+            # logger.debug(f"After update - Current streak: {user.current_streak}, Is PIN set: {user.is_pin_set}")
+            
             user.save()
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
-        except Exception as e:
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e: 
+            print(e) 
+            return Response({'detail': e.messages}, status=status.HTTP_400_BAD_REQUEST) 
 
 
 class SetCharterName(APIView):
@@ -368,82 +373,72 @@ class UpdateActivity(APIView):
         """
         # Retrieve the user from the request
         user = request.user
-        if user is None:
-            # Return an error response if no user is found for the provided email.
-            return Response(
-                {"detail": "User not found"}, status=status.HTTP_404_NOT_FOUND
-            )
-
-        # Get the current time with timezone awareness.
+        updated_streak = False
+        today = datetime.date.today()
+        if user is None: 
+            return Response({'detail':'User not found'}, status=status.HTTP_404_NOT_FOUND)
         time_now = timezone.now()
-        today = time_now.date()  # Get the current date from the current time.
-
         try:
             if time_now.hour < 12:
-                # Morning activity processing block.
-                if user.last_active_morning is not None and user.streak_morning != 0:
-                    # Calculate the difference in days between the last active morning and today.
-                    if (today - user.last_active_morning.date()).days == 1:
-                        # Increment the streak if the last activity was exactly one day ago.
+                # Morning activity
+                if user.last_active_morning is not None and user.streak_morning !=0:
+                    if time_now.date() - user.last_active_morning.date() == timedelta(days=1):
                         user.streak_morning += 1
-                    elif (today - user.last_active_morning.date()).days > 1:
-                        # Reset the streak if there has been a gap of more than one day.
+                        updated_streak = True
+                    elif time_now.date() - user.last_active_morning.date() > timedelta(days=1):
                         user.streak_morning = 1
-                else:
-                    # Initialize the morning streak if it's the user's first recorded morning activity.
+                        updated_streak = True
+                else: 
                     user.streak_morning = 1
-
-                # Update the last active morning time and increment the morning brushes count.
+                    updated_streak = True
                 user.last_active_morning = time_now
                 user.total_brushes_morning += 1
-                # Calculate the percentage of morning brushes over total brushing days.
-                user.percentage_morning = (
-                    user.total_brushes_morning / user.total_brushes_days
-                )
+                user.total_brushes += 1
+                user.percentage_morning = user.total_brushes_morning/user.total_brushes_days
 
-                # Update the maximum morning streak if the current streak exceeds it.
                 if user.streak_morning > user.max_streak_morning:
                     user.max_streak_morning = user.streak_morning
 
             else:
-                # Evening activity processing block.
-                if user.last_active_evening is not None and user.streak_evening != 0:
-                    if (today - user.last_active_evening.date()).days == 1:
+                if user.last_active_evening is not None and user.streak_evening !=0:
+                    if time_now.date() - user.last_active_evening.date() == timedelta(days=1):
                         user.streak_evening += 1
-                    elif (today - user.last_active_evening.date()).days > 1:
+                        updated_streak = True
+                    elif time_now.date() - user.last_active_evening.date() > timedelta(days=1):
                         user.streak_evening = 1
-                else:
-                    user.streak_evening = 1
-
+                        updated_streak = True
+                else: user.streak_evening = 1
+                updated_streak = True
                 user.last_active_evening = time_now
                 user.total_brushes_evening += 1
-                user.percentage_evening = (
-                    user.total_brushes_evening / user.total_brushes_days
-                )
-
+                user.total_brushes += 1
+                user.percentage_evening = user.total_brushes_evening/user.total_brushes_days
                 if user.streak_evening > user.max_streak_evening:
                     user.max_streak_evening = user.streak_evening
 
-            # Increment the total number of brushing activities.
-            user.total_brushes += 1
-            user.save()  # Save all updates to the user object.
+            if updated_streak == True:
+                time_now = timezone.now()
+                
+                
+                if time_now.hour<12:
+                    type='morning'
+                else:
+                    type='evening'
 
-            # Create and save a new activity record for this activity.
-            new_activity = UserActivity(
-                user=user,
-                activity_date=today,
-                activity_time=time_now,
-                activity_type="morning" if time_now.hour < 12 else "evening",
-            )
-            new_activity.save()
-
-            # Serialize the updated user data to return as response.
+                
+                new_activity = UserActivity(
+                    user=user,
+                    activity_date=today,
+                    activity_time= time_now,
+                    activity_type=type
+                )
+                new_activity.save()
+            user.save()
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
 
         except Exception as e:
-            # Return a detailed error message if an exception occurs.
-            return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'detail':str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UpdateLevel(APIView):
@@ -733,22 +728,19 @@ class UserActivities(APIView):
 
     def post(self, request):
         user = request.user
-        activities = UserActivity.objects.filter(user=user).values(
-            "activity_date", "activity_type"
-        )
+        activities = UserActivity.objects.filter(user=user).values('activity_date', 'activity_type')
 
         grouped = defaultdict(set)
         for activity in activities:
-            grouped[activity["activity_date"]].add(activity["activity_type"])
+            grouped[activity['activity_date']].add(activity['activity_type'])
         activity_pairs = []
 
         for date, type in grouped.items():
-            if "morning" in type and "evening" in type:
-                activity_pairs.append({"activity_date": date, "activity_type": "both"})
+            if 'morning' in type and 'evening' in type:
+                activity_pairs.append({'activity_date': date, 'activity_type': 'both'})
             else:
-                activity_type = "morning" if "morning" in type else "evening"
-                activity_pairs.append(
-                    {"activity_date": date, "activity_type": activity_type}
-                )
+                activity_type = 'morning' if 'morning' in type else 'evening'
+                activity_pairs.append({'activity_date': date, 'activity_type': activity_type})
+
 
         return Response(activity_pairs, status=status.HTTP_200_OK)
